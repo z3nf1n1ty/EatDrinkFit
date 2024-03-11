@@ -7,6 +7,7 @@ VS2022 .Net Core 8.0 Nuget Packages
 * Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
 * Microsoft.AspNetCore.Identity.EntityFrameworkCore
 * Microsoft.AspNetCore.Identity.UI
+* Microsoft.EntityFrameworkCore.Design
 * Microsoft.EntityFrameworkCore.SqlServer
 * Microsoft.EntityFrameworkCore.Tools
 * Microsoft.FeatureManagement.AspNetCore
