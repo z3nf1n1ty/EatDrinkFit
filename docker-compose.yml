@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  eatdrinkfit.web:
+    image: ${DOCKER_REGISTRY-}eatdrinkfitweb
+    ports:
+      - 8001:8080
+      - 8002:8081
+    build:
+      context: .
+      dockerfile: EatDrinkFit.Web/Dockerfile
+    depends_on:
+      - SqlServerDb 
+  SqlServerDb:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 8003:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=123DOTHISPASSWORDINASECERT#
+    volumes:
+      - db_system_data:/var/opt/mssql
+      - db_user_data:/var/opt/sqlserver
+volumes:
+  db_system_data:    
+  db_user_data:
+    

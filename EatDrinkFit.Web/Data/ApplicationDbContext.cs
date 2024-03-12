@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using EatDrinkFit.Web.Models.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EatDrinkFit.Web.Data
@@ -9,5 +10,7 @@ namespace EatDrinkFit.Web.Data
 			: base(options)
 		{
 		}
+
+		public DbSet<MacroLog> MacroLogs { get; set; }
 	}
 }
