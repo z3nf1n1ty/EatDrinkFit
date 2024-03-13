@@ -1,4 +1,5 @@
 using EatDrinkFit.Web.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +12,32 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// Was in the Example, and missing from the base template.
+builder.Services.AddRazorPages();
+
+/*
+ * The preceding highlighted code sets the fallback authorization policy. The fallback authorization policy requires all 
+ * users to be authenticated, except for Razor Pages, controllers, or action methods with an authorization attribute. 
+ * 
+ * The fallback authorization policy:
+ * Is applied to all requests that don't explicitly specify an authorization policy. For requests served by endpoint routing, 
+ * this includes any endpoint that doesn't specify an authorization attribute. For requests served by other middleware after 
+ * the authorization middleware, such as static files, this applies the policy to all requests.
+ * 
+ * Setting the fallback authorization policy to require users to be authenticated protects newly added Razor Pages and 
+ * controllers. Having authorization required by default is more secure than relying on new controllers and Razor Pages 
+ * to include the [Authorize] attribute.
+ */
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 var app = builder.Build();
 

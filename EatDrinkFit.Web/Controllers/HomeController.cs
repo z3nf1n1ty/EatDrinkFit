@@ -1,10 +1,11 @@
 using EatDrinkFit.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EatDrinkFit.Web.Controllers
 {
-	public class HomeController : Controller
+    public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
 
@@ -13,12 +14,14 @@ namespace EatDrinkFit.Web.Controllers
 			_logger = logger;
 		}
 
-		public IActionResult Index()
+        [AllowAnonymous]
+        public IActionResult Index()
 		{
 			return View();
 		}
 
-		public IActionResult Privacy()
+        [AllowAnonymous]
+        public IActionResult Privacy()
 		{
 			return View();
 		}
