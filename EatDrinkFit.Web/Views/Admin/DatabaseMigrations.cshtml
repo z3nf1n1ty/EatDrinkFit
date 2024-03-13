@@ -1,0 +1,43 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model EatDrinkFit.Web.Models.PerformDatabaseMigrationsViewModel
+
+
+<h1>Database Migrations</h1>
+
+@if(Model is not null)
+{
+    if (Model.Confirmed)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            Migration upgrades are being performed...
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            Error: No upgrade migrations were performed. Did you check the confirmed box?
+        </div>
+    }
+}
+
+<form method="post">
+    <div class="mt-3">
+        <p>This action will apply pending migrations. Please backup data prior to use.</p>
+    </div>
+
+    <div class="mt-3">
+        <input type="checkbox" class="form-check-input" id="Confirmed" asp-for="Confirmed" />
+        <label class="form-check-label" for="Confirmed">Confirm Upgrade</label>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-danger">Upgrade Database</button>
+    </div>
+</form>

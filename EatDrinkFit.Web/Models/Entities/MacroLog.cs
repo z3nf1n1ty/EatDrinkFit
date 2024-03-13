@@ -5,7 +5,7 @@ namespace EatDrinkFit.Web.Models.Entities
 	public class MacroLog
 	{
 		[Key]
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         [Required]
         public DateTime TimeStamp { get; set; }
@@ -23,5 +23,7 @@ namespace EatDrinkFit.Web.Models.Entities
         public int Sugar { get; set; }
 
         public int Protein { get; set; }
+
+        public string? Note { get; set; }
     }
 }
