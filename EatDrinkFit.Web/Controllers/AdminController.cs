@@ -21,7 +21,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EatDrinkFit.Web.Controllers
 {
-    //[Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Admin")]
 	public class AdminController : Controller
 	{
         private readonly ApplicationDbContext _dbContext;

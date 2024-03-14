@@ -13,6 +13,7 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor: 
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace EatDrinkFit.Web.Controllers
      * 
      */
 
-    //[Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
