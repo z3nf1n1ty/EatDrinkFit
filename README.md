@@ -4,6 +4,7 @@
 
 ## Requirements
 VS2022 .Net Core 8.0 Nuget Packages
+* Microsoft.AspNetCore.Authentication.JwtBearer
 * Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
 * Microsoft.AspNetCore.Identity.EntityFrameworkCore
 * Microsoft.AspNetCore.Identity.UI

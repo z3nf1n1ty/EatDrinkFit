@@ -19,6 +19,9 @@ builder.Services.AddControllersWithViews();
 // Was in the Example, and missing from the base template.
 builder.Services.AddRazorPages();
 
+// JWT support for authentication (jwt.io)
+builder.Services.AddAuthentication().AddJwtBearer();
+
 /*
  * The preceding highlighted code sets the fallback authorization policy. The fallback authorization policy requires all 
  * users to be authenticated, except for Razor Pages, controllers, or action methods with an authorization attribute. 
