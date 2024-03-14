@@ -1,3 +1,12 @@
+// Project: EatDrinkFit.Web
+// File: Program.cs
+// Origonially designed for ASP.NET Core 8.0
+
+// SPDX-FileCopyrightText: 2024 Michael Peterson <14036481+z3nf1n1ty@users.noreply.github.com>
+// SPDX-License-Identifier: Mozilla Public License 2.0
+// FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
+// FileContributor: 
+
 using EatDrinkFit.Web.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
