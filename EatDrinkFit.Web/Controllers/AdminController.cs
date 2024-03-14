@@ -1,10 +1,12 @@
 ﻿using EatDrinkFit.Web.Data;
 using EatDrinkFit.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EatDrinkFit.Web.Controllers
 {
+    //[Authorize(Roles = "Administrator")]
 	public class AdminController : Controller
 	{
         private readonly ApplicationDbContext dbContext;

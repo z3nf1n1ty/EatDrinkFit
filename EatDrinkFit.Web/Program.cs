@@ -12,15 +12,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+	//.AddDefaultTokenProviders
 builder.Services.AddControllersWithViews();
 
 // Was in the Example, and missing from the base template.
 builder.Services.AddRazorPages();
 
 // JWT support for authentication (jwt.io)
-builder.Services.AddAuthentication().AddJwtBearer();
+//builder.Services.AddAuthentication().AddJwtBearer();
 
 /*
  * The preceding highlighted code sets the fallback authorization policy. The fallback authorization policy requires all 
@@ -61,7 +62,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+////dev code add a break point and can spy on the context of incoming requests.
+//app.Use(async (context, next) =>
+//	{
+//		await next(context);
+//	});
 
 app.MapControllerRoute(
 	name: "default",
