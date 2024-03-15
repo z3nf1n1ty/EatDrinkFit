@@ -31,6 +31,17 @@ namespace EatDrinkFit.Web.Controllers
             _dbContext = dbContext;
         }
 
+        public IActionResult Index()
+        {
+			return View();
+        }
+
+        [HttpGet]
+        public IActionResult UserList()
+        {
+            return View();
+        }
+
         [HttpGet]
         //https://localhost:8002/Admin/DatabaseMigrations
         public IActionResult DatabaseMigrations()
