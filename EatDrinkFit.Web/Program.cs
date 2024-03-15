@@ -52,6 +52,8 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
+	options.AddPolicy("AdminPolicy", policy => 
+		policy.RequireRole("Admin"));
 });
 
 var app = builder.Build();

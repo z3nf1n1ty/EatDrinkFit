@@ -1,6 +1,6 @@
 ﻿@*
 // Project: EatDrinkFit.Web
-// File: Views/Home/Index.cshtml
+// File: Views/Shared/Components/_SidebarSearchFormPartial.cshtml
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -15,18 +15,14 @@
 // FileContributor:
 *@
 
-@{
-    ViewData["Title"] = "Home Page";
-}
-
-@section preloader {
-    <!-- Preloader -->
-    <div class="preloader flex-column justify-content-center align-items-center">
-        <img class="animation__shake" src="~/template/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+<!-- SidebarSearch Form -->
+<div class="form-inline">
+    <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+            <button class="btn btn-sidebar">
+                <i class="fas fa-search fa-fw"></i>
+            </button>
+        </div>
     </div>
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
