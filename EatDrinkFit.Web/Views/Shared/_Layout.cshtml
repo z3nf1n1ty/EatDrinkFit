@@ -87,7 +87,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
@@ -259,7 +259,7 @@
                 }
                 else
                 {
-
+                    <!-- No user is signed in -->
                 }
 
                 <!-- SidebarSearch Form -->
@@ -277,35 +277,62 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
+
+                        <!-- Home -->
+                        <li class="nav-item">
+                            <a class="nav-link @ViewData["SideNavHomeClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </li>
+
+                        <!-- Dashboard -->
+                        <li class="nav-item">
+                            <a class="nav-link @ViewData["SideNavDashboardClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+
+                        <!-- Meals -->
+                        <li class="nav-item">
+                            <a class="nav-link @ViewData["SideNavMealsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Meals</p>
+                            </a>
+                        </li>
+
+                        <!-- Resources -->
                         <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
+                            <a href="#" class="nav-link @ViewData["SideNavAResourcesClassActive"]">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
-                                    Dashboard
+                                    Resources
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./index.html" class="nav-link active">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavResourceMealsClassActive"]">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v1</p>
+                                        <p>Meals</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index2.html" class="nav-link">
+                                    <a class="nav-link @ViewData["SideNavResourceFoodsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v2</p>
+                                        <p>Foods</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index3.html" class="nav-link">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavResourceLogsClassActive"]">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v3</p>
+                                        <p>Logs</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
+
                         <li class="nav-item">
                             <a href="pages/widgets.html" class="nav-link">
                                 <i class="nav-icon fas fa-th"></i>
