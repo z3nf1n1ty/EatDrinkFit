@@ -289,45 +289,150 @@
                         <!-- Dashboard -->
                         <li class="nav-item">
                             <a class="nav-link @ViewData["SideNavDashboardClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="nav-icon fas fa-home"></i>
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
 
-                        <!-- Meals -->
+                        <!-- Reports -->
                         <li class="nav-item">
-                            <a class="nav-link @ViewData["SideNavMealsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="nav-icon fas fa-home"></i>
-                                <p>Meals</p>
-                            </a>
-                        </li>
-
-                        <!-- Resources -->
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link @ViewData["SideNavAResourcesClassActive"]">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <a href="#" class="nav-link @ViewData["SideNavReportsClassActive"]">
+                                <i class="nav-icon fas fas fa-copy"></i>
                                 <p>
-                                    Resources
+                                    Reports
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./index.html" class="nav-link @ViewData["SideNavResourceMealsClassActive"]">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavReportsAClassActive"]">
                                         <i class="far fa-circle nav-icon"></i>
+                                        <p>Reports A</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @ViewData["SideNavReportsBClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reports B</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavReportsCClassActive"]">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reports C</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Goals -->
+                        <li class="nav-item">
+                            <a class="nav-link @ViewData["SideNavGoalsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="nav-icon fas fa-bullseye"></i>
+                                <p>Goals</p>
+                            </a>
+                        </li>
+
+                        <!-- Food -->
+                        <li class="nav-item menu-open">
+                            <a href="#" class="nav-link @ViewData["SideNavResourcesClassActive"]">
+                                <i class="nav-icon fas fas fa-carrot"></i>
+                                <p>
+                                    Food
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview" style="display: block">
+                                <li class="nav-item">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavFoodFavoritesClassActive"]">
+                                        <i class="fas fa-star nav-icon"></i>
+                                        <p>Favorites</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavFoodMealsClassActive"]">
+                                        <i class="fas fa-utensils nav-icon"></i>
                                         <p>Meals</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link @ViewData["SideNavResourceFoodsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Foods</p>
+                                    <a class="nav-link @ViewData["SideNavFoodComponentsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <i class="fas fa-cloud-meatball nav-icon"></i>
+                                        <p>Components</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index3.html" class="nav-link @ViewData["SideNavResourceLogsClassActive"]">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavFoodIngredientsClassActive"]">
+                                        <i class="fas fa-pepper-hot nav-icon"></i>
+                                        <p>Ingredients</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavFoodManualClassActive"]">
+                                        <i class="fas fa-edit nav-icon"></i>
+                                        <p>Manual</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Data -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link @ViewData["SideNavDataClassActive"]">
+                                <i class="nav-icon fas fa-table"></i>
+                                <p>
+                                    Data
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavDataMacrosClassActive"]">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Logs</p>
+                                        <p>Macro Data</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @ViewData["SideNavDataHydrationClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Hydration Data</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavDataFitnessClassActive"]">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Fitness Data</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Resources -->
+                        <li class="nav-item menu-open">
+                            <a href="#" class="nav-link @ViewData["SideNavResourcesClassActive"]">
+                                <i class="nav-icon fas fas fa-book"></i>
+                                <p>
+                                    Resources
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview" style="display:block">
+                                <li class="nav-item">
+                                    <a href="./index.html" class="nav-link @ViewData["SideNavResourceCalculatorsClassActive"]">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Calculators</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @ViewData["SideNavResourceNutritionClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Nutrion Data</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="./index3.html" class="nav-link @ViewData["SideNavResourceOtherClassActive"]">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Other</p>
                                     </a>
                                 </li>
                             </ul>
