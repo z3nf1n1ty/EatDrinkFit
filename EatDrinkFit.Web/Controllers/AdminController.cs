@@ -33,11 +33,24 @@ namespace EatDrinkFit.Web.Controllers
 
         public IActionResult Index()
         {
-			return View();
+            //return View();
+			return RedirectToAction("SiteMetrics");
+        }
+
+        [HttpGet]
+        public IActionResult SiteMetrics()
+        {
+            return View();
         }
 
         [HttpGet]
         public IActionResult UserList()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult UserEdit()
         {
             return View();
         }

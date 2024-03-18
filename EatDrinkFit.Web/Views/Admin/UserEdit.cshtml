@@ -1,6 +1,6 @@
 ﻿@*
 // Project: EatDrinkFit.Web
-// File: Views/Admin/UserList.cshtml
+// File: Views/Admin/UserEdit.cshtml
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -16,18 +16,20 @@
 *@
 
 @{
-    ViewData["Title"] = "User List";
+    ViewData["Title"] = "User Edit";
 
     ViewData["SideNavAdminUserManagmentClassOpen"] = "menu-open";
     ViewData["SideNavAdminUserManagmentClassActive"] = "active";
     ViewData["SideNavAdminUserManagmentStyleBlock"] = "style=\"display: block\"";
 
-    ViewData["SideNavAdminUserManagmentUserListClassActive"] = "active";
-
-    ViewData["ContentHeaderBreadcrumb"] =
+    ViewData["HTMLSideNavAdminUserManagmentEdit"] =
     @"
-    <li class=""breadcrumb-item""><a href=""/"">Home</a></li>
-    <li class=""breadcrumb-item active"">User List</li>
+    <li class=""nav-item"">
+        <a class=""nav-link active"" asp-area="""" asp-controller="""" asp-action="""">
+    <i class=""fas fa-user-edit nav-icon""></i>
+    <p>User Edit</p>
+        </a>
+    </li>
     ";
 }
 
