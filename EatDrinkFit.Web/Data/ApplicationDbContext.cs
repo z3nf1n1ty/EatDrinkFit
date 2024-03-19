@@ -20,5 +20,5 @@ namespace EatDrinkFit.Web.Data
 		}
 
 		public DbSet<MacroLog> MacroLogs { get; set; }
-	}
+    }
 }

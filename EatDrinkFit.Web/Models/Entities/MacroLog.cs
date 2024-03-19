@@ -9,6 +9,9 @@ namespace EatDrinkFit.Web.Models.Entities
         public uint Id { get; set; }
 
         [Required]
+        public Guid UserId { get; set; }
+
+        [Required]
         public DateTime TimeStamp { get; set; }
 
         [Required]
