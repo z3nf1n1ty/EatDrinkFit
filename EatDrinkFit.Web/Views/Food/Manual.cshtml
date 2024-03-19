@@ -31,12 +31,8 @@
     <li class=""breadcrumb-item active"">Manual</li>
     ";
 }
-
-<h1>Hydration</h1>
-
-<h2>Water</h2>
-
-<h2>Fluid</h2>
+@* asp-page-handler="ManualMacrosPost" *@
+@model EatDrinkFit.Web.Models.ManualMacroLogViewModel
 
 <div class="row">
     <div class="col-lg-6">
@@ -44,52 +40,57 @@
             <div class="card-header">
                 <h3 class="card-title">Manual Food Macros Form</h3>
             </div>
-            <form>
+            <form method="post" >
                 <div class="card-body">
 
                     <div class="form-group">
                         <label>Calories</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <input type="text" class="form-control" asp-for="Calories" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Total Fat</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Total Fat (g)</label>
+                        <input type="text" class="form-control" asp-for="Fat" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Cholesterol</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Cholesterol (mg)</label>
+                        <input type="text" class="form-control" asp-for="Cholesterol" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Sodium</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Sodium (mg)</label>
+                        <input type="text" class="form-control" asp-for="Sodium" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Total Carbs</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Total Carbs (g)</label>
+                        <input type="text" class="form-control" asp-for="TotalCarb" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Dietary Fiber</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Dietary Fiber (g)</label>
+                        <input type="text" class="form-control" asp-for="Fiber" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Sugar</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Sugar (g)</label>
+                        <input type="text" class="form-control" asp-for="Sugar" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
-                        <label>Protein</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <label>Protein (g)</label>
+                        <input type="text" class="form-control" asp-for="Protein" placeholder="Enter ...">
                     </div>
 
                     <div class="form-group">
                         <label>Note</label>
-                        <input type="text" class="form-control" placeholder="Enter ...">
+                        <input type="text" class="form-control" asp-for="Note" placeholder="Enter ...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date [leave blank for current date and time]</label>
+                        <input type="datetime-local" class="form-control" asp-for="TimeStamp">
                     </div>
 
                 </div>
@@ -155,7 +156,7 @@
 
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-info">Submit</button>
+                            <button type="submit" class="btn btn-warning">Submit</button>
                         </div>
                     </form>
                 </div>

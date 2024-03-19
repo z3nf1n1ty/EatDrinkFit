@@ -9,7 +9,7 @@ namespace EatDrinkFit.Web.Models.Entities
         public uint Id { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Required]
         public DateTime TimeStamp { get; set; }
@@ -32,5 +32,21 @@ namespace EatDrinkFit.Web.Models.Entities
         public float Protein { get; set; }
 
         public string? Note { get; set; }
+
+        public MacroLogSource Source { get; set; }
+
+        public bool FromFavorites { get; set; }
+
+        public bool IsFavorite { get; set; }
     }
+
+    public enum MacroLogSource
+    {
+        Undefined,
+        Meal,
+        Component,
+        Ingredient,
+        Manual,
+    }
+
 }
