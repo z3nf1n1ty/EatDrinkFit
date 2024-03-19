@@ -1,5 +1,5 @@
 ﻿// Project: EatDrinkFit.Web
-// File: Controllers/AdminController.cs
+// File: Controllers/FoodController.cs
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -18,15 +18,14 @@ using EatDrinkFit.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 namespace EatDrinkFit.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
-	public class AdminController : Controller
-	{
+    [Authorize(Roles = "User,Admin")]
+    public class FoodController : Controller
+    {
         private readonly ApplicationDbContext _dbContext;
 
-        public AdminController(ApplicationDbContext dbContext)
+        public FoodController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -34,49 +33,37 @@ namespace EatDrinkFit.Web.Controllers
         public IActionResult Index()
         {
             //return View();
-			return RedirectToAction("SiteMetrics");
+            return RedirectToAction("Meals");
         }
 
         [HttpGet]
-        public IActionResult SiteMetrics()
+        public IActionResult Favorites()
         {
             return View();
         }
 
         [HttpGet]
-        public IActionResult UserList()
+        public IActionResult Meals()
         {
             return View();
         }
 
         [HttpGet]
-        public IActionResult UserEdit()
+        public IActionResult Components()
         {
             return View();
         }
 
         [HttpGet]
-        //https://localhost:8002/Admin/DatabaseMigrations
-        public IActionResult DatabaseMigrations()
-		{
-			return View();
-		}
+        public IActionResult Ingredients()
+        {
+            return View();
+        }
 
-		[HttpPost]
-        public async Task<IActionResult> DatabaseMigrations(PerformDatabaseMigrationsViewModel viewModel)
-		{
-			if (viewModel.Confirmed)
-			{
-                await _dbContext.Database.MigrateAsync();
-
-                //await dbContext.Database.EnsureCreatedAsync();
-            }
-			else
-			{
-                //return View();
-            }
-
-            return View(viewModel);
-		}
-	}
+        [HttpGet]
+        public IActionResult Manual()
+        {
+            return View();
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace EatDrinkFit.Web.Models.Entities
 {
@@ -10,19 +11,22 @@ namespace EatDrinkFit.Web.Models.Entities
         [Required]
         public DateTime TimeStamp { get; set; }
 
-        public int Calories { get; set; }
+        [Required]
+        public uint Calories { get; set; }
 
-        public int Fat { get; set; }
+        public float Fat { get; set; }
 
-        public int Cholesterol { get; set; }
+        public float Cholesterol { get; set; }
 
-        public int TotalCarb { get; set; }
+        public float Sodium { get; set; }
 
-        public int Fiber { get; set; }
+        public float TotalCarb { get; set; }
 
-        public int Sugar { get; set; }
+        public float Fiber { get; set; }
 
-        public int Protein { get; set; }
+        public float Sugar { get; set; }
+
+        public float Protein { get; set; }
 
         public string? Note { get; set; }
     }

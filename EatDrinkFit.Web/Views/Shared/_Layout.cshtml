@@ -346,8 +346,8 @@
                         </li>
 
                         <!-- Food -->
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link @ViewData["SideNavResourcesClassActive"]">
+                        <li class="nav-item menu-open @ViewData["SideNavFoodClassOpen"]">
+                            <a href="#" class="nav-link @ViewData["SideNavFoodClassActive"]">
                                 <i class="nav-icon fas fas fa-carrot"></i>
                                 <p>
                                     Food
@@ -362,25 +362,25 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index.html" class="nav-link @ViewData["SideNavFoodMealsClassActive"]">
+                                    <a class="nav-link @ViewData["SideNavFoodMealsClassActive"]" asp-area="" asp-controller="Food" asp-action="Meals">
                                         <i class="fas fa-utensils nav-icon"></i>
                                         <p>Meals</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link @ViewData["SideNavFoodComponentsClassActive"]" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <a class="nav-link @ViewData["SideNavFoodComponentsClassActive"]" asp-area="" asp-controller="Food" asp-action="Components">
                                         <i class="fas fa-cloud-meatball nav-icon"></i>
                                         <p>Components</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index3.html" class="nav-link @ViewData["SideNavFoodIngredientsClassActive"]">
+                                    <a class="nav-link @ViewData["SideNavFoodIngredientsClassActive"]" asp-area="" asp-controller="Food" asp-action="Ingredients">
                                         <i class="fas fa-pepper-hot nav-icon"></i>
                                         <p>Ingredients</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index3.html" class="nav-link @ViewData["SideNavFoodManualClassActive"]">
+                                    <a class="nav-link @ViewData["SideNavFoodManualClassActive"]" asp-area="" asp-controller="Food" asp-action="Manual">
                                         <i class="fas fa-edit nav-icon"></i>
                                         <p>Manual</p>
                                     </a>
