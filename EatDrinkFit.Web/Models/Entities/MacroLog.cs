@@ -42,11 +42,11 @@ namespace EatDrinkFit.Web.Models.Entities
 
     public enum MacroLogSource
     {
-        Undefined,
-        Meal,
-        Component,
-        Ingredient,
-        Manual,
+        Undefined = 0,
+        Meal = 1,
+        Component = 2,
+        Ingredient = 3,
+        Manual = 4,
     }
 
 }

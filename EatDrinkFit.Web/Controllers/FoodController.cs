@@ -76,6 +76,9 @@ namespace EatDrinkFit.Web.Controllers
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
+            // TODO: Test if timestamp is the default date and time, if so change it to the current date and time.
+            var defaultDateTime = new DateTime();
+
             var macroLog = new MacroLog
             {
                 UserId = _userManager.GetUserId(this.User),
@@ -88,6 +91,9 @@ namespace EatDrinkFit.Web.Controllers
                 Sugar = viewModel.Sugar,
                 Protein = viewModel.Protein,
                 Note = viewModel.Note,
+                Source = MacroLogSource.Manual,
+                IsFavorite = false, // Cannot be favorite when a manual entry is used.
+                FromFavorites = false, // Cannot be from favorites when a manual entry is used.
                 TimeStamp = viewModel.TimeStamp,
             };
 
