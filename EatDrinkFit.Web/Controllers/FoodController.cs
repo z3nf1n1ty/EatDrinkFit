@@ -16,6 +16,7 @@
 using EatDrinkFit.Web.Data;
 using EatDrinkFit.Web.Models;
 using EatDrinkFit.Web.Models.Entities;
+using Elfie.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,12 +73,12 @@ namespace EatDrinkFit.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Manual(ManualMacroLogViewModel viewModel)
+        public async Task<IActionResult> ManualFood(ManualMacroLogViewModel viewModel)
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
-            // TODO: Test if timestamp is the default date and time, if so change it to the current date and time.
-            var defaultDateTime = new DateTime();
+            // Replace default DateTime with DateTime.Now if needed.
+            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp);
 
             var macroLog = new MacroLog
             {
@@ -94,7 +95,7 @@ namespace EatDrinkFit.Web.Controllers
                 Source = MacroLogSource.Manual,
                 IsFavorite = false, // Cannot be favorite when a manual entry is used.
                 FromFavorites = false, // Cannot be from favorites when a manual entry is used.
-                TimeStamp = viewModel.TimeStamp,
+                TimeStamp = timeStamp,
             };
 
             await _dbContext.MacroLogs.AddAsync(macroLog);
@@ -104,6 +105,78 @@ namespace EatDrinkFit.Web.Controllers
             ModelState.Clear();
 
             return View("Manual");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManualWater(ManualMacroLogViewModel viewModel)
+        {
+            // TODO: Verify the data before submitting to the database as well as to clear the model.
+
+            // Replace default DateTime with DateTime.Now if needed.
+            var timeStamp = ProcessDefaultDateTime(viewModel.WaterTimeStamp);
+
+            var hydrationLog = new HydrationLog
+            {
+                UserId = _userManager.GetUserId(this.User),
+                Unit = viewModel.WaterUnit,
+                Ammount = viewModel.WaterAmmount,
+                Note = viewModel.WaterNote,
+                TimeStamp = timeStamp,
+                Type = HydrationLogType.Water,
+                Source = HydrationLogSource.Manual,
+                FromFavorites = false,
+                IsFavorite = false,
+            };
+
+            await _dbContext.HydrationLogs.AddAsync(hydrationLog);
+
+            await _dbContext.SaveChangesAsync();
+
+            ModelState.Clear();
+
+            return View("Manual");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManualFluid(ManualMacroLogViewModel viewModel)
+        {
+            // TODO: Verify the data before submitting to the database as well as to clear the model.
+
+            // Replace default DateTime with DateTime.Now if needed.
+            var timeStamp = ProcessDefaultDateTime(viewModel.FluidTimeStamp);
+
+            var hydrationLog = new HydrationLog
+            {
+                UserId = _userManager.GetUserId(this.User),
+                Unit = viewModel.FluidUnit,
+                Ammount = viewModel.FluidAmmount,
+                Note = viewModel.FluidNote,
+                TimeStamp = timeStamp,
+                Type = HydrationLogType.Fluid,
+                Source = HydrationLogSource.Manual,
+                FromFavorites = false,
+                IsFavorite = false,
+            };
+
+            await _dbContext.HydrationLogs.AddAsync(hydrationLog);
+
+            await _dbContext.SaveChangesAsync();
+
+            ModelState.Clear();
+
+            return View("Manual");
+        }
+
+        private DateTime ProcessDefaultDateTime(DateTime source)
+        {
+            var defaultDateTime = new DateTime();
+
+            if(source == defaultDateTime)
+            {
+                source = DateTime.Now;
+            }
+
+            return source;
         }
     }
 }

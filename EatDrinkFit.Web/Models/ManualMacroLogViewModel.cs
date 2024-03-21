@@ -36,5 +36,21 @@ namespace EatDrinkFit.Web.Models
         public float Protein { get; set; }
 
         public string? Note { get; set; }
+
+        public float WaterAmmount { get; set; }
+
+        public string? WaterUnit { get; set;}
+
+        public string? WaterNote { get; set; }
+
+        public DateTime WaterTimeStamp { get; set; }
+
+        public float FluidAmmount { get; set; }
+
+        public string? FluidUnit { get; set; }
+
+        public string? FluidNote { get; set; }
+
+        public DateTime FluidTimeStamp { get; set; }
     }
 }

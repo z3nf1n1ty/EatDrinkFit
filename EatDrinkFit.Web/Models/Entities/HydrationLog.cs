@@ -13,14 +13,13 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace EatDrinkFit.Web.Models.Entities
 {
-	public class MacroLog
-	{
-		[Key]
+    public class HydrationLog
+    {
+        [Key]
         public uint Id { get; set; }
 
         [Required]
@@ -29,33 +28,23 @@ namespace EatDrinkFit.Web.Models.Entities
         [Required]
         public DateTime TimeStamp { get; set; }
 
+        public HydrationLogType Type { get; set; }
+
+        public float Ammount { get; set; }
+
         [Required]
-        public uint Calories { get; set; }
-
-        public float Fat { get; set; }
-
-        public float Cholesterol { get; set; }
-
-        public float Sodium { get; set; }
-
-        public float TotalCarb { get; set; }
-
-        public float Fiber { get; set; }
-
-        public float Sugar { get; set; }
-
-        public float Protein { get; set; }
+        public string? Unit { get; set; }
 
         public string? Note { get; set; }
 
-        public MacroLogSource Source { get; set; }
+        public HydrationLogSource Source { get; set; }
 
         public bool FromFavorites { get; set; }
 
         public bool IsFavorite { get; set; }
     }
 
-    public enum MacroLogSource
+    public enum HydrationLogSource
     {
         Undefined = 0,
         Meal = 1,
@@ -64,4 +53,10 @@ namespace EatDrinkFit.Web.Models.Entities
         Manual = 4,
     }
 
+    public enum HydrationLogType
+    {
+        Undefined = 0,
+        Water = 1,
+        Fluid = 2,
+    }
 }
