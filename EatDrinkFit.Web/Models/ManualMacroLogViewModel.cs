@@ -52,5 +52,11 @@ namespace EatDrinkFit.Web.Models
         public string? FluidNote { get; set; }
 
         public DateTime FluidTimeStamp { get; set; }
+
+        public string? ManualTZ { get; set; }
+
+        public string? WaterTZ { get; set; }
+
+        public string? FluidTZ { get; set; }
     }
 }

@@ -34,6 +34,8 @@
 @* asp-page-handler="ManualMacrosPost" *@
 @model EatDrinkFit.Web.Models.ManualMacroLogViewModel
 
+<asp:HiddenField ID="HiddenField1" runat="server" />
+
 <div class="row">
     <div class="col-lg-6">
         <div class="card card-success">
@@ -85,12 +87,16 @@
 
                     <div class="form-group">
                         <label>Note</label>
-                        <input type="text" class="form-control" asp-for="Note" placeholder="Enter ...">
+                        @* <input type="text" class="form-control" asp-for="Note" placeholder="Enter ..."> *@
                     </div>
 
                     <div class="form-group">
                         <label>Date [leave blank for current date and time]</label>
                         <input type="datetime-local" class="form-control" asp-for="TimeStamp">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control hiddentimezone" asp-for="ManualTZ" value="" readonly>
                     </div>
 
                 </div>
@@ -135,6 +141,10 @@
                                 <input type="datetime-local" class="form-control" asp-for="WaterTimeStamp">
                             </div>
 
+                            <div class="form-group">
+                                <input type="text" class="form-control hiddentimezone" asp-for="WaterTZ" value="" readonly>
+                            </div>
+
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-info" asp-controller="Food" asp-action="ManualWater">Submit</button>
@@ -172,6 +182,10 @@
                             <div class="form-group">
                                 <label>Date [leave blank for current date and time]</label>
                                 <input type="datetime-local" class="form-control" asp-for="FluidTimeStamp">
+                            </div>
+
+                            <div class="form-group">
+                                <input type="text" class="form-control hiddentimezone" asp-for="FluidTZ" value="" readonly>
                             </div>
 
                         </div>

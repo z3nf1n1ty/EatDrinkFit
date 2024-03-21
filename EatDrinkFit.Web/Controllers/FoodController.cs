@@ -173,7 +173,7 @@ namespace EatDrinkFit.Web.Controllers
 
             if(source == defaultDateTime)
             {
-                source = DateTime.Now;
+                source = DateTime.UtcNow;
             }
 
             return source;
