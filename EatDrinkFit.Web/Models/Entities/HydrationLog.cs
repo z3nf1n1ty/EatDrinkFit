@@ -1,5 +1,5 @@
 ﻿// Project: EatDrinkFit.Web
-// File: Models/Entities/MacroLog.cs
+// File: Models/Entities/HydrationLog.cs
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -27,6 +27,9 @@ namespace EatDrinkFit.Web.Models.Entities
 
         [Required]
         public DateTime TimeStamp { get; set; }
+
+        [Required]
+        public string? Timezone { get; set; }
 
         public HydrationLogType Type { get; set; }
 

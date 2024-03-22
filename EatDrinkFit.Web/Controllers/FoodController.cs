@@ -13,6 +13,7 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
+using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
 using EatDrinkFit.Web.Models;
 using EatDrinkFit.Web.Models.Entities;
@@ -21,6 +22,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TimeZoneConverter;
 
 namespace EatDrinkFit.Web.Controllers
 {
@@ -29,11 +31,13 @@ namespace EatDrinkFit.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IGlobalProperties _globalProperties;
 
-        public FoodController(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
+        public FoodController(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IGlobalProperties globalProperties)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _globalProperties = globalProperties;
         }
 
         public IActionResult Index()
@@ -77,8 +81,20 @@ namespace EatDrinkFit.Web.Controllers
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
-            // Replace default DateTime with DateTime.Now if needed.
-            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp);
+            // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
+            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
+
+            // TODO: Add TZ to database with timestamp
+            string timeZone;
+
+            if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
+            {
+                timeZone = viewModel.ManualTZ;
+            }
+            else
+            {
+                timeZone = TZConvert.IanaToWindows(viewModel.ManualTZ);
+            }
 
             var macroLog = new MacroLog
             {
@@ -96,6 +112,7 @@ namespace EatDrinkFit.Web.Controllers
                 IsFavorite = false, // Cannot be favorite when a manual entry is used.
                 FromFavorites = false, // Cannot be from favorites when a manual entry is used.
                 TimeStamp = timeStamp,
+                Timezone = timeZone,
             };
 
             await _dbContext.MacroLogs.AddAsync(macroLog);
@@ -104,7 +121,7 @@ namespace EatDrinkFit.Web.Controllers
 
             ModelState.Clear();
 
-            return View("Manual");
+            return RedirectToAction("Manual");
         }
 
         [HttpPost]
@@ -112,8 +129,8 @@ namespace EatDrinkFit.Web.Controllers
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
-            // Replace default DateTime with DateTime.Now if needed.
-            var timeStamp = ProcessDefaultDateTime(viewModel.WaterTimeStamp);
+            // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
+            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.WaterTZ);
 
             var hydrationLog = new HydrationLog
             {
@@ -134,7 +151,7 @@ namespace EatDrinkFit.Web.Controllers
 
             ModelState.Clear();
 
-            return View("Manual");
+            return RedirectToAction("Manual");
         }
 
         [HttpPost]
@@ -142,8 +159,9 @@ namespace EatDrinkFit.Web.Controllers
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
-            // Replace default DateTime with DateTime.Now if needed.
-            var timeStamp = ProcessDefaultDateTime(viewModel.FluidTimeStamp);
+            // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
+            var timeStamp  = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.FluidTZ);
+
 
             var hydrationLog = new HydrationLog
             {
@@ -164,9 +182,14 @@ namespace EatDrinkFit.Web.Controllers
 
             ModelState.Clear();
 
-            return View("Manual");
+            return RedirectToAction("Manual");
         }
 
+        /// <summary>
+        /// Replace a provided default, aka min, DateTime object with the current UTC time.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>A DateTime ojbect with the current UTC time.</returns>
         private DateTime ProcessDefaultDateTime(DateTime source)
         {
             var defaultDateTime = new DateTime();
@@ -177,6 +200,61 @@ namespace EatDrinkFit.Web.Controllers
             }
 
             return source;
+        }
+
+        /// <summary>
+        /// Replace a provided default, aka min, DateTime object with the current local time specifed by the IANA timezone.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>A DateTime ojbect with the current local time specifed by the IANA timezone.</returns>
+        private DateTime ProcessDefaultDateTime(DateTime source, string targetTimeZoneIANA)
+        {
+            var defaultDateTime = new DateTime();
+
+            if (source == defaultDateTime)
+            {
+                var tzi = TimeZoneInfo.FindSystemTimeZoneById(targetTimeZoneIANA);
+
+                source = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzi);
+            }
+
+            return source;
+        }
+
+        private bool IsDaylightSavingsTime(DateTime unclearDate)
+        {
+            bool isDST = false;
+
+            // Report time as DST if it is either ambiguous or DST.
+            if (TimeZoneInfo.Local.IsAmbiguousTime(unclearDate) || TimeZoneInfo.Local.IsDaylightSavingTime(unclearDate))
+            {
+                isDST = true;
+            }                
+
+            return isDST;
+        }
+
+        private DateTime ConvertToUTC_IANA(DateTime source, string sourceTimeZoneIANA)
+        {
+            // Get Windows aka .NET formatted timezone string.
+            string tzStr = TZConvert.IanaToWindows(sourceTimeZoneIANA);
+            System.TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(tzStr);
+
+            DateTime result = System.TimeZoneInfo.ConvertTimeToUtc(source, tzi);
+            //System.TimeZoneInfo.ConvertTime()
+
+            return result;
+        }
+
+        private DateTime ConvertFromUTC_IANA(DateTime source, string targetTimeZoneIANA)
+        {
+            // Get Windows aka .NET formatted timezone string.
+            string tzStr = TZConvert.IanaToWindows(targetTimeZoneIANA);
+            System.TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(tzStr);
+
+            DateTime result = System.TimeZoneInfo.ConvertTimeFromUtc(source, tzi);
+
+            return result;
         }
     }
 }

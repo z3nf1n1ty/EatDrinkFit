@@ -7,12 +7,20 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor: 
 
+using EatDrinkFit.Web.Configuration;
+using EatDrinkFit.Web.Configuration.ServiceInstallers;
 using EatDrinkFit.Web.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Custom Service Installer to reduce the footprint of Program.cs.
+builder.Services
+	.InstallServices(
+		builder.Configuration,
+		typeof(IServiceInstaller).Assembly);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

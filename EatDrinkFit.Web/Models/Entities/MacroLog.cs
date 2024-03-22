@@ -30,6 +30,9 @@ namespace EatDrinkFit.Web.Models.Entities
         public DateTime TimeStamp { get; set; }
 
         [Required]
+        public string? Timezone { get; set; }
+
+        [Required]
         public uint Calories { get; set; }
 
         public float Fat { get; set; }
