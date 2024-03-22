@@ -1,0 +1,44 @@
+﻿@*
+// Project: EatDrinkFit.Web
+// File: Views/Dashboard/Index.cshtml
+// Origonially designed for ASP.NET Core 8.0
+
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// Copyright (C) 2024 Michael Peterson <14036481+z3nf1n1ty@users.noreply.github.com>
+
+// SPDX-FileCopyrightText: 2024 Michael Peterson <14036481+z3nf1n1ty@users.noreply.github.com>
+// SPDX-License-Identifier: Mozilla Public License 2.0
+// FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
+// FileContributor:
+*@
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    ViewData["SideNavDashboardClassActive"] = "active";
+
+    ViewData["ContentHeaderBreadcrumb"] =
+            @"
+    <li class=""breadcrumb-item""><a href=""/"">Home</a></li>
+    <li class=""breadcrumb-item active"">Dashboard</li>
+    ";
+}
+
+<div class="row">
+    <div class="col-lg-7">
+        calories chart
+    </div>
+    <div class="col-lg-5">
+        <div class="row">
+            <div class="col-lg-12">
+                quick log buttons
+            </div>
+            <div class="col-lg-12">
+                donut chart ration of fat, carbs, protein...
+            </div>
+        </div>
+    </div>
+</div>
