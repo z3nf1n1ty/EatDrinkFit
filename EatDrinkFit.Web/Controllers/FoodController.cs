@@ -84,7 +84,7 @@ namespace EatDrinkFit.Web.Controllers
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
             var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
 
-            // TODO: Add TZ to database with timestamp
+            // Format timezone for databast per global properties.
             string timeZone;
 
             if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
@@ -96,6 +96,7 @@ namespace EatDrinkFit.Web.Controllers
                 timeZone = TZConvert.IanaToWindows(viewModel.ManualTZ);
             }
 
+            // Create the object for the database transaction.
             var macroLog = new MacroLog
             {
                 UserId = _userManager.GetUserId(this.User),
@@ -132,6 +133,19 @@ namespace EatDrinkFit.Web.Controllers
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
             var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.WaterTZ);
 
+            // Format timezone for databast per global properties.
+            string timeZone;
+
+            if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
+            {
+                timeZone = viewModel.WaterTZ;
+            }
+            else
+            {
+                timeZone = TZConvert.IanaToWindows(viewModel.WaterTZ);
+            }
+
+            // Create the object for the database transaction.
             var hydrationLog = new HydrationLog
             {
                 UserId = _userManager.GetUserId(this.User),
@@ -139,6 +153,7 @@ namespace EatDrinkFit.Web.Controllers
                 Ammount = viewModel.WaterAmmount,
                 Note = viewModel.WaterNote,
                 TimeStamp = timeStamp,
+                Timezone = timeZone,
                 Type = HydrationLogType.Water,
                 Source = HydrationLogSource.Manual,
                 FromFavorites = false,
@@ -162,7 +177,19 @@ namespace EatDrinkFit.Web.Controllers
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
             var timeStamp  = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.FluidTZ);
 
+            // Format timezone for databast per global properties.
+            string timeZone;
 
+            if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
+            {
+                timeZone = viewModel.FluidTZ;
+            }
+            else
+            {
+                timeZone = TZConvert.IanaToWindows(viewModel.FluidTZ);
+            }
+
+            // Create the object for the database transaction.
             var hydrationLog = new HydrationLog
             {
                 UserId = _userManager.GetUserId(this.User),
@@ -170,6 +197,7 @@ namespace EatDrinkFit.Web.Controllers
                 Ammount = viewModel.FluidAmmount,
                 Note = viewModel.FluidNote,
                 TimeStamp = timeStamp,
+                Timezone = timeZone,
                 Type = HydrationLogType.Fluid,
                 Source = HydrationLogSource.Manual,
                 FromFavorites = false,
