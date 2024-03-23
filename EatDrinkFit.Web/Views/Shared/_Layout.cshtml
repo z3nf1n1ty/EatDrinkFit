@@ -565,7 +565,8 @@
     <!-- Bootstrap 4 -->
     <script src="~/template/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- ChartJS -->
-    <script src="~/template/plugins/chart.js/Chart.min.js"></script>
+    @* <script src="~/template/plugins/chart.js/Chart.min.js"></script> *@
+    <script src="~/template/plugins/chart.js/chart.umd.4-4-2.js"></script>
     <!-- Sparkline -->
     <script src="~/template/plugins/sparklines/sparkline.js"></script>
     <!-- JQVMap -->
@@ -591,7 +592,10 @@
 
     <!-- <script src="~/lib/jquery/dist/jquery.min.js"></script> -->
     <!-- <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> -->
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @Html.Raw(ViewData["ScriptDashboardDailyCaloriesChart"])
 </body>
 </html>
