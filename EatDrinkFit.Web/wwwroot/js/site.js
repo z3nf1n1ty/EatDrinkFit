@@ -72,32 +72,59 @@ function dashboardCaloriesChartOld() {
 
 function dashboardCaloriesChart() {
     const data = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: ['Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [{
             label: 'Weekly Sales',
-            data: [18, 12, 6, 9, 12, 3, 9],
+            data: [1832, 1587, 2136, 2079, 1981, 1863, 1875, 1634, 1958, 1867],
             backgroundColor: [
-                'rgba(255, 26, 104, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(0, 0, 0, 0.2)'
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
             ],
             borderColor: [
-                'rgba(255, 26, 104, 1)',
-                'rgba(54, 162, 235, 1)',
                 'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(0, 0, 0, 1)'
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 206, 86, 1)',
             ],
             borderWidth: 1
         }]
     };
 
+    // custom topline plugin
+    const topLine = {
+        id: 'topLine',
+        afterDatasetsDraw(chart, args, plugins) {
+            const { ctx, data } = chart;
+
+            ctx.save();
+            chart.getDatasetMeta(0).data.forEach((datapoint, index) => {
+
+                // topline content removed
+
+                // text
+                ctx.font = 'bold 12px sans-serif';
+                //ctx.fillStyle = 'black';
+                ctx.fillStyle = 'rgba(31, 45, 61, 0.8)';
+                ctx.textAlign = 'center';
+                const txtValue = data.datasets[0].data[index];
+                ctx.fillText(txtValue, datapoint.x, datapoint.y - 10);
+            });            
+        }
+    }
 
     // config 
     const config = {
@@ -106,10 +133,12 @@ function dashboardCaloriesChart() {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grace: '5%'
                 }
             }
-        }
+        },
+        plugins: [topLine]
     };
 
     // render init block
