@@ -40,61 +40,66 @@
 
 <div class="row">
 
-    <div class="col-xl-5">
-        <div class="row">
+    <div class="col-xl-auto">
+        <div class="row" style="max-width:528px;">
 
             <div class="col-xl-12">
                 <div class="card card-secondary">
                     <div class="card-header">
                         <h3 class="card-title">Quick Log Items</h3>
                     </div>
-                    <form method="post">
-                        <div class="card-body">
+                    <div class="card-body">
 
-                            <div class="btn-group form-group" aria-label="Unit Selection" data-toggle="buttons">
-                                <label class="btn btn-info">
-                                    <input type="radio" id="WaterUnit" name="WaterUnit" value="FLOZ" asp-for="WaterUnit" autofocus="true" hidden checked /> fl oz
-                                </label>
-                                <label class="btn btn-info">
-                                    <input type="radio" id="WaterUnit2" name="WaterUnit" value="ML" asp-for="WaterUnit" hidden /> ml
-                                </label>
-                            </div>
+                        <a class="btn btn-app">
+                            <i class="fas fa-play"></i> Play
+                        </a>
 
-                            <div class="form-group">
-                                <label>Water Ammount</label>
-                                <input type="text" class="form-control" asp-for="WaterAmmount" placeholder="Enter ...">
-                            </div>
+                        <a class="btn btn-app">
+                            <i class="fas fa-play"></i> Play
+                        </a>
 
-                            <div class="form-group">
-                                <label>Note</label>
-                                <input type="text" class="form-control" asp-for="WaterNote" placeholder="Enter ...">
-                            </div>
+                        <a class="btn btn-app">
+                            <i class="fas fa-play"></i> Play
+                        </a>
 
-                            <div class="form-group">
-                                <label>Date [leave blank for current date and time]</label>
-                                <input type="datetime-local" class="form-control" asp-for="WaterTimeStamp">
-                            </div>
+                        <a class="btn btn-app">
+                            <i class="fas fa-play"></i> Play
+                        </a>
 
-                            <div class="form-group">
-                                <input type="text" class="form-control hiddentimezone" asp-for="WaterTZ" value="" readonly>
-                            </div>
+                        <a class="btn btn-app">
+                            <i class="fas fa-play"></i> Play
+                        </a>
 
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-info" asp-controller="Food" asp-action="ManualWater">Submit</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
             <div class="col-xl-12">
-                donut chart ration of fat, carbs, protein...
+                
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Donut Chart</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
     </div>
 
-    <div class="col-xl-7">
+    <div class="col-xl">
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Daily Calories | Last 10 Days | Goal: 1800-2000cal</h3>
@@ -116,4 +121,31 @@
         </div>
     </div>
     
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Daily Calories | Last 10 Days | Goal: 1800-2000cal</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <canvas id="CaloriesBarChart2" style="min-height: 500px; height: 250px; max-height: 500px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+    </div>
 </div>

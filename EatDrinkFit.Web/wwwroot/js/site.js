@@ -86,7 +86,7 @@ function dashboardCaloriesChart() {
                 'rgba(255, 193, 7, 0.6)',
                 'rgba(255, 193, 7, 0.6)',
                 'rgba(255, 193, 7, 0.6)',
-                'rgba(255, 193, 7, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
             ],
             borderColor: [
                 'rgba(255, 206, 86, 1)',
@@ -98,7 +98,7 @@ function dashboardCaloriesChart() {
                 'rgba(255, 206, 86, 1)',
                 'rgba(255, 206, 86, 1)',
                 'rgba(255, 206, 86, 1)',
-                'rgba(255, 206, 86, 1)',
+                'rgba(40, 167, 69, 1)',
             ],
             borderWidth: 1
         }]
