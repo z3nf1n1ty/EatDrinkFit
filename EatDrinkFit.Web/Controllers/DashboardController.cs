@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TimeZoneConverter;
 
 namespace EatDrinkFit.Web.Controllers
@@ -40,8 +41,14 @@ namespace EatDrinkFit.Web.Controllers
             _globalProperties = globalProperties;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var dashboardCalorieChartEntry = await _dbContext.DashboardCalorieChartEnteries
+                                                             .Where(e => e.UserId == userID)
+                                                             .Select(e => new { e.LogDate, e.Calories })
+                                                             .ToListAsync();
+
             return View();
         }
 

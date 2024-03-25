@@ -14,6 +14,7 @@
 // FileContributor:
 
 using EatDrinkFit.Web.Models.Entities;
+using EatDrinkFit.Web.Models.Entities.Charts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,5 +38,7 @@ namespace EatDrinkFit.Web.Data
 		public DbSet<MacroLog> MacroLogs { get; set; }
 
         public DbSet<HydrationLog> HydrationLogs { get; set; }
+
+        public DbSet<DashboardCalorieChartEntry> DashboardCalorieChartEnteries { get; set; }
     }
 }
