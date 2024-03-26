@@ -64,6 +64,16 @@ builder.Services.AddAuthorization(options =>
 		policy.RequireRole("Admin"));
 });
 
+// Added for sessions
+//builder.Services.AddDistributedMemoryCache();
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromSeconds(10);
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.IsEssential = true;
+//});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -85,6 +95,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseSession();
 
 ////dev code add a break point and can spy on the context of incoming requests.
 //app.Use(async (context, next) =>

@@ -17,6 +17,7 @@ using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
 using EatDrinkFit.Web.Models;
 using EatDrinkFit.Web.Models.Entities;
+using EatDrinkFit.Web.Services.Charts;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,12 +33,21 @@ namespace EatDrinkFit.Web.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IGlobalProperties _globalProperties;
+        private readonly IPostDataStorageService _postDataStorageService;
+        private readonly IDashboardChartDataService _dashboardChartDataService;
 
-        public FoodController(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IGlobalProperties globalProperties)
+        public FoodController(
+            ApplicationDbContext dbContext,
+            UserManager<IdentityUser> userManager,
+            IGlobalProperties globalProperties,
+            IPostDataStorageService postDataStorageService,
+            IDashboardChartDataService dashboardChartDataService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _globalProperties = globalProperties;
+            _postDataStorageService = postDataStorageService;
+            _dashboardChartDataService = dashboardChartDataService;
         }
 
         public IActionResult Index()
@@ -81,48 +91,77 @@ namespace EatDrinkFit.Web.Controllers
         {
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
-            // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
-            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
+            // Get userID for this context.
+            var userID = _userManager.GetUserId(this.User);
 
-            // Format timezone for databast per global properties.
-            string timeZone;
+            // Get user timezone from browser cookie not form post data
+            string userTimezone = Request.Cookies["userTimezone"];
 
-            if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
+            // Process the verified form data for the manual food post using the service.
+            if (await _postDataStorageService.ProcessManualFoodPostData(viewModel, userID) is false)
             {
-                timeZone = viewModel.ManualTZ;
+                // Error
+
+                // TODO: Return to the view with the form data still pressent, and a error notification.
             }
-            else
+
+            // Chart data will need to be updated if the previous was successfull.
+            if (await _dashboardChartDataService.ProcessChartDataAfterMacroLogUpdate(userID) is false)
             {
-                timeZone = TZConvert.IanaToWindows(viewModel.ManualTZ);
+                // Error
+
+                // TODO: Return to the view with the form data cleared, and a error notification.
+
+                ModelState.Clear();
+
+                return RedirectToAction("Manual");
             }
 
-            // Create the object for the database transaction.
-            var macroLog = new MacroLog
-            {
-                UserId = _userManager.GetUserId(this.User),
-                Calories = viewModel.Calories,
-                Fat = viewModel.Fat,
-                Cholesterol = viewModel.Cholesterol,
-                Sodium = viewModel.Sodium,
-                TotalCarb = viewModel.TotalCarb,
-                Fiber = viewModel.Fiber,
-                Sugar = viewModel.Sugar,
-                Protein = viewModel.Protein,
-                Note = viewModel.Note,
-                Source = MacroLogSource.Manual,
-                IsFavorite = false, // Cannot be favorite when a manual entry is used.
-                FromFavorites = false, // Cannot be from favorites when a manual entry is used.
-                TimeStamp = timeStamp,
-                Timezone = timeZone,
-            };
 
-            await _dbContext.MacroLogs.AddAsync(macroLog);
+            //// Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
+            //var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
 
-            await _dbContext.SaveChangesAsync();
+            //// Format timezone for databast per global properties.
+            //string timeZone;
+
+            //if ((bool)_globalProperties.Application["DatabaseTimezoneIANA"])
+            //{
+            //    timeZone = viewModel.ManualTZ;
+            //}
+            //else
+            //{
+            //    timeZone = TZConvert.IanaToWindows(viewModel.ManualTZ);
+            //}
+
+            //// Create the object for the database transaction.
+            //var macroLog = new MacroLog
+            //{
+            //    UserId = _userManager.GetUserId(this.User),
+            //    Calories = viewModel.Calories,
+            //    Fat = viewModel.Fat,
+            //    Cholesterol = viewModel.Cholesterol,
+            //    Sodium = viewModel.Sodium,
+            //    TotalCarb = viewModel.TotalCarb,
+            //    Fiber = viewModel.Fiber,
+            //    Sugar = viewModel.Sugar,
+            //    Protein = viewModel.Protein,
+            //    Note = viewModel.Note,
+            //    Source = MacroLogSource.Manual,
+            //    IsFavorite = false, // Cannot be favorite when a manual entry is used.
+            //    FromFavorites = false, // Cannot be from favorites when a manual entry is used.
+            //    TimeStamp = timeStamp,
+            //    Timezone = timeZone,
+            //};
+
+            //await _dbContext.MacroLogs.AddAsync(macroLog);
+
+            //await _dbContext.SaveChangesAsync();
+
+            // The post has been successfully processed, stored, and charts updated. Clear the form and notify success.
 
             ModelState.Clear();
 
-            return RedirectToAction("Manual");
+            return RedirectToAction("Manual");  // TODO: Notify success
         }
 
         [HttpPost]

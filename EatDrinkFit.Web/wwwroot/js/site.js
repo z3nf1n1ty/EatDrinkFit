@@ -7,7 +7,16 @@
     //window.onload = function () {
     //    document.getElementById("<%=HiddenField1.ClientID %>").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     //    alert(document.getElementById("<%=HiddenField1.ClientID %>").value);
-    //};
+//};
+
+$(document).ready(function () {
+    const timeZoneValue = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    $(".hiddentimezone").val(timeZoneValue);
+
+    // Set Timezone Cookie
+    //$.cookie('userTimezone', timeZoneValue);
+    document.cookie = "userTimezone=" + timeZoneValue;
+});
 
 function setValue(id, newvalue) {
     var s = document.getElementById(id);
@@ -15,8 +24,15 @@ function setValue(id, newvalue) {
 }
 
 window.onload = function () {
+    // Set timezone for form post
     //setValue("ManualTimeZone", Intl.DateTimeFormat().resolvedOptions().timeZone);
-    $(".hiddentimezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    //const timeZoneValue = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    //$(".hiddentimezone").val(timeZoneValue);
+
+    // Set Timezone Cookie
+    //$.cookie('userTimezone', timeZoneValue);
+
+    
 }
 
 function dashboardCaloriesChartOld() {
