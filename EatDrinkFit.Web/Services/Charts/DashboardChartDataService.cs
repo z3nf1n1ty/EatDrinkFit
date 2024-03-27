@@ -89,11 +89,9 @@ namespace EatDrinkFit.Web.Services.Charts
             // Use a transation to make the retreval and update of data.
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            // Get the dashboard calories chart data needed from the MacroLogs as a list.
-
-
-
+            // Get the dashboard chart data needed from the MacroLogs as a list.
             var macroLogs = await _dbContext.MacroLogs
+                .AsNoTracking()
                 .Where(l => l.UserId == userID)
                 .Select(l => new TransactionMacroLog()
                 {
@@ -110,15 +108,14 @@ namespace EatDrinkFit.Web.Services.Charts
                 })
                 .ToListAsync();
 
-            //if (!macroLogs.Succeeded)
-            //{
-            //    await transaction.RollbackAsync();
-            //    var errors1 = macroLogs.Errors.Select(error => error.Description);
+            if (macroLogs is null)
+            {
+                await transaction.RollbackAsync();
 
-            //    // TODO: Log the db error.
+                // TODO: Log the db error.
 
-            //    return false;
-            //}
+                return false;
+            }
 
             // Proccess the macro data into the calorie chart data.
 

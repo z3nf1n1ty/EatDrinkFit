@@ -113,10 +113,6 @@ namespace EatDrinkFit.Web.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            // Create Cookie for Timezone
-            //Response.Cookies.Append("userTimezone", "");
-
-
             ReturnUrl = returnUrl;
         }
 
@@ -125,10 +121,6 @@ namespace EatDrinkFit.Web.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            // Read timezone cookie
-            //string userTimezone = Request.Cookies["userTimezone"];
-            //HttpContext.Session.SetString("userTimezone", userTimezone);
 
             if (ModelState.IsValid)
             {

@@ -10,11 +10,13 @@
 //};
 
 $(document).ready(function () {
+    // Get AINI timezone for the current user
     const timeZoneValue = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Set timezone for form post when marked with hiddentimezone class
     $(".hiddentimezone").val(timeZoneValue);
 
     // Set Timezone Cookie
-    //$.cookie('userTimezone', timeZoneValue);
     document.cookie = "userTimezone=" + timeZoneValue;
 });
 
