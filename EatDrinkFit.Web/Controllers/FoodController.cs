@@ -15,6 +15,7 @@
 
 using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
+using EatDrinkFit.Web.Helpers;
 using EatDrinkFit.Web.Models;
 using EatDrinkFit.Web.Models.Entities;
 using EatDrinkFit.Web.Services.Charts;
@@ -95,7 +96,7 @@ namespace EatDrinkFit.Web.Controllers
             var userID = _userManager.GetUserId(this.User);
 
             // Get user timezone from browser cookie not form post data
-            string userTimezone = Request.Cookies["userTimezone"];
+            string userTimezone = TimezoneHelper.GetBrowserReportedTimezone(Request);
 
             // Process the verified form data for the manual food post using the service.
             if (await _postDataStorageService.ProcessManualFoodPostData(viewModel, userID) is false)
@@ -106,7 +107,7 @@ namespace EatDrinkFit.Web.Controllers
             }
 
             // Chart data will need to be updated if the previous was successfull.
-            if (await _dashboardChartDataService.ProcessChartDataAfterMacroLogUpdate(userID) is false)
+            if (await _dashboardChartDataService.ProcessChartDataAfterMacroLogUpdate(userID, userTimezone) is false)
             {
                 // Error
 
@@ -170,7 +171,7 @@ namespace EatDrinkFit.Web.Controllers
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
-            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.WaterTZ);
+            var timeStamp = TimezoneHelper.ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.WaterTZ);
 
             // Format timezone for databast per global properties.
             string timeZone;
@@ -214,7 +215,7 @@ namespace EatDrinkFit.Web.Controllers
             // TODO: Verify the data before submitting to the database as well as to clear the model.
 
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
-            var timeStamp  = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.FluidTZ);
+            var timeStamp  = TimezoneHelper.ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.FluidTZ);
 
             // Format timezone for databast per global properties.
             string timeZone;
@@ -267,61 +268,6 @@ namespace EatDrinkFit.Web.Controllers
             }
 
             return source;
-        }
-
-        /// <summary>
-        /// Replace a provided default, aka min, DateTime object with the current local time specifed by the IANA timezone.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns>A DateTime ojbect with the current local time specifed by the IANA timezone.</returns>
-        private DateTime ProcessDefaultDateTime(DateTime source, string targetTimeZoneIANA)
-        {
-            var defaultDateTime = new DateTime();
-
-            if (source == defaultDateTime)
-            {
-                var tzi = TimeZoneInfo.FindSystemTimeZoneById(targetTimeZoneIANA);
-
-                source = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzi);
-            }
-
-            return source;
-        }
-
-        private bool IsDaylightSavingsTime(DateTime unclearDate)
-        {
-            bool isDST = false;
-
-            // Report time as DST if it is either ambiguous or DST.
-            if (TimeZoneInfo.Local.IsAmbiguousTime(unclearDate) || TimeZoneInfo.Local.IsDaylightSavingTime(unclearDate))
-            {
-                isDST = true;
-            }                
-
-            return isDST;
-        }
-
-        private DateTime ConvertToUTC_IANA(DateTime source, string sourceTimeZoneIANA)
-        {
-            // Get Windows aka .NET formatted timezone string.
-            string tzStr = TZConvert.IanaToWindows(sourceTimeZoneIANA);
-            System.TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(tzStr);
-
-            DateTime result = System.TimeZoneInfo.ConvertTimeToUtc(source, tzi);
-            //System.TimeZoneInfo.ConvertTime()
-
-            return result;
-        }
-
-        private DateTime ConvertFromUTC_IANA(DateTime source, string targetTimeZoneIANA)
-        {
-            // Get Windows aka .NET formatted timezone string.
-            string tzStr = TZConvert.IanaToWindows(targetTimeZoneIANA);
-            System.TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(tzStr);
-
-            DateTime result = System.TimeZoneInfo.ConvertTimeFromUtc(source, tzi);
-
-            return result;
         }
     }
 }

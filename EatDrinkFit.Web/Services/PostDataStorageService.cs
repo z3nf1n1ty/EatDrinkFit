@@ -17,6 +17,7 @@
 
 using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
+using EatDrinkFit.Web.Helpers;
 using EatDrinkFit.Web.Models;
 using EatDrinkFit.Web.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -56,7 +57,7 @@ namespace EatDrinkFit.Web.Services.Charts
         public async Task<bool> ProcessManualFoodPostData(ManualMacroLogViewModel viewModel, string? userID)
         {
             // Replace default DateTime with DateTime.Now if needed. Expressed as the users local time.
-            var timeStamp = ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
+            var timeStamp = TimezoneHelper.ProcessDefaultDateTime(viewModel.TimeStamp, viewModel.ManualTZ);
 
             // Format timezone for databast per global properties.
             string timeZone;
@@ -97,25 +98,6 @@ namespace EatDrinkFit.Web.Services.Charts
             await _dbContext.SaveChangesAsync();
 
             return true;
-        }
-
-        /// <summary>
-        /// Replace a provided default, aka min, DateTime object with the current local time specifed by the IANA timezone.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns>A DateTime ojbect with the current local time specifed by the IANA timezone.</returns>
-        private DateTime ProcessDefaultDateTime(DateTime source, string targetTimeZoneIANA)
-        {
-            var defaultDateTime = new DateTime();
-
-            if (source == defaultDateTime)
-            {
-                var tzi = TimeZoneInfo.FindSystemTimeZoneById(targetTimeZoneIANA);
-
-                source = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzi);
-            }
-
-            return source;
         }
     }    
 }
