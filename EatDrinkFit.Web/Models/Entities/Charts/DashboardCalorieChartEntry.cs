@@ -15,6 +15,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Policy;
 
 namespace EatDrinkFit.Web.Models.Entities.Charts
@@ -23,6 +24,7 @@ namespace EatDrinkFit.Web.Models.Entities.Charts
     [Index(nameof(Id), IsUnique = true)]
     public class DashboardCalorieChartEntry
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public uint Id { get; set; }
 
         [Required]

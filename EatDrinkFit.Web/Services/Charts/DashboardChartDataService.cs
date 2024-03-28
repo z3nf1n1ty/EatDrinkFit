@@ -89,7 +89,7 @@ namespace EatDrinkFit.Web.Services.Charts
              * todo Dashboard - daily percent of calories
              */
 
-            var startDate = TimezoneHelper.ConvertFromUTC_IANA(DateTime.UtcNow, userTimezone);
+            var startDate = (TimezoneHelper.ConvertFromUTC_IANA(DateTime.UtcNow, userTimezone)).Date;
 
             const int numberOfChartDays = 10;
 
@@ -129,6 +129,8 @@ namespace EatDrinkFit.Web.Services.Charts
             List<DashboardCalorieChartEntry> dcceList = CreateDashboardCalorieChartEntry(macroLogs, userID, startDate);
 
             // Store the calorie chart data.
+            await _dbContext.AddRangeAsync(dcceList);
+            await _dbContext.SaveChangesAsync();
 
             // Process the macro data into the macro chart data.
 

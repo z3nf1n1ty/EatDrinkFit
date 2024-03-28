@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EatDrinkFit.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240328123611_001")]
+    [Migration("20240328175721_001")]
     partial class _001
     {
         /// <inheritdoc />
@@ -37,7 +37,10 @@ namespace EatDrinkFit.Web.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.HasKey("UserId", "LogDate");
 

@@ -34,7 +34,10 @@ namespace EatDrinkFit.Web.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.HasKey("UserId", "LogDate");
 

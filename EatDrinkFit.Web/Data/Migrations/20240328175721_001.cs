@@ -1,4 +1,4 @@
-﻿using System;
+﻿datusing System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -56,7 +56,8 @@ namespace EatDrinkFit.Web.Data.Migrations
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LogDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Calories = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
