@@ -22,7 +22,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EatDrinkFit.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
-	public class AdminController : Controller
+    public class AdminController : Controller
 	{
         private readonly ApplicationDbContext _dbContext;
 
@@ -62,7 +62,7 @@ namespace EatDrinkFit.Web.Controllers
 			return View();
 		}
 
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> DatabaseMigrations(PerformDatabaseMigrationsViewModel viewModel)
 		{
 			if (viewModel.Confirmed)

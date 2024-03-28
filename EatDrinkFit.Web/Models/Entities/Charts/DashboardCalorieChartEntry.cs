@@ -13,13 +13,16 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Policy;
 
 namespace EatDrinkFit.Web.Models.Entities.Charts
 {
+    [PrimaryKey(nameof(UserId), nameof(LogDate))]
+    [Index(nameof(Id), IsUnique = true)]
     public class DashboardCalorieChartEntry
     {
-        [Key]
         public uint Id { get; set; }
 
         [Required]

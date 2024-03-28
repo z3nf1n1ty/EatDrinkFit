@@ -24,26 +24,22 @@ namespace EatDrinkFit.Web.Data.Migrations
 
             modelBuilder.Entity("EatDrinkFit.Web.Models.Entities.Charts.DashboardCalorieChartEntry", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("Calories")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LogDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("Calories")
+                        .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId", "LogDate");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("DashboardCalorieChartEnteries");
                 });

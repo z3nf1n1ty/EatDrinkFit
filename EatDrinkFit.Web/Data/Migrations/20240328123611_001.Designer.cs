@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EatDrinkFit.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240322200021_Added timezone to logs")]
-    partial class Addedtimezonetologs
+    [Migration("20240328123611_001")]
+    partial class _001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,28 @@ namespace EatDrinkFit.Web.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EatDrinkFit.Web.Models.Entities.Charts.DashboardCalorieChartEntry", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LogDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Calories")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId", "LogDate");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("DashboardCalorieChartEnteries");
+                });
 
             modelBuilder.Entity("EatDrinkFit.Web.Models.Entities.HydrationLog", b =>
                 {

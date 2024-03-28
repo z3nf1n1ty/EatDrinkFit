@@ -20,7 +20,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EatDrinkFit.Web.Data
 {
-	/*
+    /*
      * Setup Database
      * 1 - Configure/apply database settings and configure tables defined by appsettings.json, ApplicationDbContext.cs and Program.cs
      * 2 - open package manager console (tools -> Nuget Package Manager -> Package Manager Console)
@@ -28,7 +28,9 @@ namespace EatDrinkFit.Web.Data
      * 4 - Run 'Update-Database'
      */
 
-	public class ApplicationDbContext : IdentityDbContext
+    //PM> Add-Migration 001 -OutputDir "Data/Migrations"
+
+    public class ApplicationDbContext : IdentityDbContext
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 			: base(options)
