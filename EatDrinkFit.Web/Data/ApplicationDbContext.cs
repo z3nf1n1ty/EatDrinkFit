@@ -42,5 +42,7 @@ namespace EatDrinkFit.Web.Data
         public DbSet<HydrationLog> HydrationLogs { get; set; }
 
         public DbSet<DashboardCalorieChartEntry> DashboardCalorieChartEnteries { get; set; }
+
+        public DbSet<DashboardMacroChartEntry> DashboardMacroChartEnteries { get; set; }
     }
 }

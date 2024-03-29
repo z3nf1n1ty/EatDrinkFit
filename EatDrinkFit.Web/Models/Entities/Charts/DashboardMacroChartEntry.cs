@@ -1,5 +1,5 @@
 ﻿// Project: EatDrinkFit.Web
-// File: Models/Entities/Charts/DashboardCalorieChart.cs
+// File: Models/Entities/Charts/DashboardMacroChart.cs
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -21,7 +21,7 @@ namespace EatDrinkFit.Web.Models.Entities.Charts
 {
     [PrimaryKey(nameof(UserId), nameof(LogDate))]
     [Index(nameof(Id), IsUnique = true)]
-    public class DashboardCalorieChartEntry
+    public class DashboardMacroChartEntry
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public uint Id { get; set; }
@@ -33,6 +33,12 @@ namespace EatDrinkFit.Web.Models.Entities.Charts
         public DateTime LogDate { get; set; }
 
         [Required]
-        public uint Calories { get; set; }
+        public uint Fat { get; set; }
+
+        [Required]
+        public uint Carb { get; set; }
+
+        [Required]
+        public uint Protein { get; set; }
     }
 }

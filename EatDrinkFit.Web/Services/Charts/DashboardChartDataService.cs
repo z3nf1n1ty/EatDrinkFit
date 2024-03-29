@@ -129,10 +129,26 @@ namespace EatDrinkFit.Web.Services.Charts
             List<DashboardCalorieChartEntry> dcceList = CreateDashboardCalorieChartEntry(macroLogs, userID, startDate);
 
             // Store the calorie chart data.
-            await _dbContext.AddRangeAsync(dcceList);
+            foreach (var r in dcceList)
+            {
+                if (r is not null)
+                {
+                    //_dbContext.DashboardCalorieChartEnteries.Update(e).Property(x => x.Id).IsModified = false;
+                    if(_dbContext.DashboardCalorieChartEnteries.Any(e => e == r))
+                    {
+                        _dbContext.DashboardCalorieChartEnteries.Update(r).Property(x => x.Id).IsModified = false;
+                    }
+                    else
+                    {
+                        _dbContext.DashboardCalorieChartEnteries.Add(r);
+                    }
+                }
+            }
+
             await _dbContext.SaveChangesAsync();
 
             // Process the macro data into the macro chart data.
+            // TODO: keep making chart data for the dashboard.
 
             // Store the macro chart data.
 
@@ -186,6 +202,11 @@ namespace EatDrinkFit.Web.Services.Charts
             
 
             return dcceList;
+        }
+
+        private List<DashboardMacroChartEntry> CreateDashboardMacroChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
+        {
+            return null;
         }
     }    
 }

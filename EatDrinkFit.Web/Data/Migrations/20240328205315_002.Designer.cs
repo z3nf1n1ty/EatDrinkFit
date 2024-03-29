@@ -4,6 +4,7 @@ using EatDrinkFit.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EatDrinkFit.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240328205315_002")]
+    partial class _002
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,38 +47,7 @@ namespace EatDrinkFit.Web.Data.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("DashboardCalorieChartEnteries");
-                });
-
-            modelBuilder.Entity("EatDrinkFit.Web.Models.Entities.Charts.DashboardMacroChartEntry", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("LogDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("Carb")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Fat")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("Protein")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("UserId", "LogDate");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("DashboardMacroChartEnteries");
+                    b.ToTable("DashboardCalorieChartEntry");
                 });
 
             modelBuilder.Entity("EatDrinkFit.Web.Models.Entities.HydrationLog", b =>
