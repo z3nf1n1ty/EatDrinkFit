@@ -26,83 +26,109 @@
         <li class=""breadcrumb-item active"">Dashboard</li>
         ";
 
-    ViewData["ScriptDashboardDailyCaloriesChart"] =
+    // Script that will be triggered by jqury after the page loades. This is place at the bottom of the shared layout.
+    ViewData["ScriptsLastSharedLayout1"] =
         @"
         <script>
         $(function () {
-        dashboardCaloriesChart();
+        dashboadIndexJS();
         })
         </script>
         ";
 }
 
-@model EatDrinkFit.Web.Models.ManualMacroLogViewModel
+@model EatDrinkFit.Web.Models.DashboardViewModel
+
+<script type="text/javascript">
+    function dashboadIndexJS() {
+
+		var calorieChartLabels=[];
+		var caloriesChartDate=[];
+
+	@if (Model.DashboardCalorieChartModels is not null && Model.DashboardCalorieChartModels.Count > 0)
+	{
+        // foreach (var item in Model.DashboardCalorieChartModels)
+        // {
+        // 	@:calorieChartLabels.push('@item.Date');
+        // 	@:caloriesChartDate.push('@item.Calories');
+        // }
+
+        for (int i = Model.DashboardCalorieChartModels.Count - 1; i >= 0; i--)
+        {
+            @:calorieChartLabels.push('@Model.DashboardCalorieChartModels[i].Date');
+            @:caloriesChartDate.push('@Model.DashboardCalorieChartModels[i].Calories');
+        }
+    }
+
+            dashboardCaloriesChart(calorieChartLabels, caloriesChartDate);
+	}
+</script>
 
 <div class="row">
 
-    <div class="col-xl-auto">
-        <div class="row" style="max-width:528px;">
-
-            <div class="col-xl-12">
-                <div class="card card-secondary">
-                    <div class="card-header">
-                        <h3 class="card-title">Quick Log Items</h3>
-                    </div>
-                    <div class="card-body">
-
-                        <a class="btn btn-app">
-                            <i class="fas fa-play"></i> Play
-                        </a>
-
-                        <a class="btn btn-app">
-                            <i class="fas fa-play"></i> Play
-                        </a>
-
-                        <a class="btn btn-app">
-                            <i class="fas fa-play"></i> Play
-                        </a>
-
-                        <a class="btn btn-app">
-                            <i class="fas fa-play"></i> Play
-                        </a>
-
-                        <a class="btn btn-app">
-                            <i class="fas fa-play"></i> Play
-                        </a>
-
-                    </div>
+	<div class="col-xl-auto">
+		<div class="card card-secondary">
+			<div class="card-header">
+				<h3 class="card-title">Quick Log Items</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
                 </div>
-            </div>
+			</div>
+			<div class="card-body">
 
-            <div class="col-xl-12">
-                
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Donut Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                    </div>
+				<a class="btn btn-app">
+					<i class="fas fa-play"></i> Play
+				</a>
 
-                </div>
+				<a class="btn btn-app">
+					<i class="fas fa-play"></i> Play
+				</a>
 
-            </div>
+				<a class="btn btn-app">
+					<i class="fas fa-play"></i> Play
+				</a>
 
-        </div>
-    </div>
+				<a class="btn btn-app">
+					<i class="fas fa-play"></i> Play
+				</a>
+
+				<a class="btn btn-app">
+					<i class="fas fa-play"></i> Play
+				</a>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xl">
+
+		<div class="card card-danger">
+			<div class="card-header">
+				<h3 class="card-title">Percent Calories from Macros Chart</h3>
+				<div class="card-tools">
+					<button type="button" class="btn btn-tool" data-card-widget="collapse">
+						<i class="fas fa-minus"></i>
+					</button>
+				</div>
+			</div>
+			<div class="card-body">
+				<canvas id="donutChart" style="min-height: 64px; height: 64px; max-height: 64px; max-width: 100%;"></canvas>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<div class="row">
 
     <div class="col-xl">
         <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Daily Calories | Last 10 Days | Goal: 1800-2000cal</h3>
+                <h3 class="card-title">Daily Calories | Last 14 Days | Goal: 1800-2000cal</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -114,7 +140,7 @@
             </div>
             <div class="card-body">
                 <div class="chart">
-                    <canvas id="CaloriesBarChart" style="min-height: 500px; height: 250px; max-height: 500px; max-width: 100%;"></canvas>
+                    <canvas id="CaloriesBarChart" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;"></canvas>
                 </div>
             </div>
 

@@ -15,8 +15,12 @@
 
 using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
+using EatDrinkFit.Web.Helpers;
 using EatDrinkFit.Web.Models;
+using EatDrinkFit.Web.Models.Charts;
 using EatDrinkFit.Web.Models.Entities;
+using EatDrinkFit.Web.Models.Entities.Charts;
+using EatDrinkFit.Web.Services.Charts;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -33,23 +37,39 @@ namespace EatDrinkFit.Web.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IGlobalProperties _globalProperties;
+        private readonly IDashboardChartDataService _dashboardChartDataService;
 
-        public DashboardController(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IGlobalProperties globalProperties)
+        public DashboardController(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IGlobalProperties globalProperties, IDashboardChartDataService dashboardChartDataService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _globalProperties = globalProperties;
+            _dashboardChartDataService = dashboardChartDataService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var dashboardCalorieChartEntry = await _dbContext.DashboardCalorieChartEnteries
-                                                             .Where(e => e.UserId == userID)
-                                                             .Select(e => new { e.LogDate, e.Calories })
-                                                             .ToListAsync();
+            // Get user timezone from browser cookie not form post data
+            string userTimezone = TimezoneHelper.GetBrowserReportedTimezone(Request);
 
-            return View();
+            // Create a DashboardViewModel to be consummed by the view.
+            var dashboardViewModel = new DashboardViewModel();
+
+            // Create a start date for building out chart data in the event of an error.
+            var startDate = (TimezoneHelper.ConvertFromUTC_IANA(DateTime.UtcNow, userTimezone)).Date;            
+
+            // 
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userID is null)
+            {
+                return NotFound(); // TODO: Change to an error page and message.
+            }
+
+            // Get calorie chart data and add it to the view model.
+            dashboardViewModel = await _dashboardChartDataService.GetDashboardCalorieChartModels(dashboardViewModel, userID, startDate);
+
+            return View(dashboardViewModel);
         }
 
         [HttpGet]

@@ -13,9 +13,16 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace EatDrinkFit.Web.Models.Charts
 {
     public class DashboardCalorieChartModel
     {
+        public uint Id { get; set; }
+
+        public string Date { get; set; } = string.Empty;
+
+        public uint Calories { get; set; }
     }
 }

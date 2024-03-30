@@ -19,6 +19,7 @@ using EatDrinkFit.Web.Configuration;
 using EatDrinkFit.Web.Data;
 using EatDrinkFit.Web.Helpers;
 using EatDrinkFit.Web.Models;
+using EatDrinkFit.Web.Models.Charts;
 using EatDrinkFit.Web.Models.Entities;
 using EatDrinkFit.Web.Models.Entities.Charts;
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +39,8 @@ namespace EatDrinkFit.Web.Services.Charts
         /// </summary>
         /// <returns>True for success of proccessing and storage.</returns>
         public Task<bool> ProcessChartDataAfterMacroLogUpdate(string? userID, string userTimezone);
+
+        public Task<DashboardViewModel> GetDashboardCalorieChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
     }
 
     /// <summary>
@@ -91,8 +94,6 @@ namespace EatDrinkFit.Web.Services.Charts
 
             var startDate = (TimezoneHelper.ConvertFromUTC_IANA(DateTime.UtcNow, userTimezone)).Date;
 
-            const int numberOfChartDays = 10;
-
             // Use a transation to make the retreval and update of data.
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
@@ -134,13 +135,17 @@ namespace EatDrinkFit.Web.Services.Charts
                 if (r is not null)
                 {
                     //_dbContext.DashboardCalorieChartEnteries.Update(e).Property(x => x.Id).IsModified = false;
-                    if(_dbContext.DashboardCalorieChartEnteries.Any(e => e == r))
+                    if(await _dbContext.DashboardCalorieChartEnteries.AnyAsync(e => e == r))
                     {
                         _dbContext.DashboardCalorieChartEnteries.Update(r).Property(x => x.Id).IsModified = false;
                     }
                     else
                     {
+                        //await _dbContext.DashboardCalorieChartEnteries.AddAsync(r);
                         _dbContext.DashboardCalorieChartEnteries.Add(r);
+                        // Add should be local until the savechanges, since the identity does not need to be used.
+                        // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
+                        // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
                     }
                 }
             }
@@ -150,6 +155,7 @@ namespace EatDrinkFit.Web.Services.Charts
             // Process the macro data into the macro chart data.
             // TODO: keep making chart data for the dashboard.
 
+
             // Store the macro chart data.
 
             // Save the complete set of changes to the database.
@@ -158,9 +164,89 @@ namespace EatDrinkFit.Web.Services.Charts
             return true;
         }
 
+        /// <summary>
+        /// Get the dashboard calorie chart data in the form of a list of DashbardCalorieChartModel stored in a DashboardViewModel.
+        /// </summary>
+        /// <param name="dashboardViewModel"></param>
+        /// <param name="userID"></param>
+        /// <param name="startDate"></param>
+        /// <returns>A list of Calorie Chart Data staring with the most current date.</returns>
+        public async Task<DashboardViewModel> GetDashboardCalorieChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate)
+        {
+            if(dashboardViewModel is null)
+            {
+                dashboardViewModel = new DashboardViewModel();
+            }
+
+            int chartDays = (int)_globalProperties.Application["DashboardCalorieChartDays"];
+            var chartDate = new DateTime(startDate.Ticks);
+            var tempDate = chartDate.AddDays(-1 * chartDays);
+
+            dashboardViewModel.DashboardCalorieChartModels = new List<Models.Charts.DashboardCalorieChartModel>(chartDays);
+
+            var dashboardCalorieChartEntries = await _dbContext.DashboardCalorieChartEnteries
+                                                 .Where(e => e.UserId == userID && e.LogDate > tempDate)
+                                                 .OrderByDescending(e => e.LogDate)
+                                                 .Select(e => new { e.Id, e.LogDate, e.Calories })
+                                                 .ToListAsync();
+
+            if (dashboardCalorieChartEntries is not null)
+            {
+                int i = 0;
+
+                while (chartDate > tempDate)
+                {
+                    // Check if the current index in the list matches the current logDate.
+                    if (i < dashboardCalorieChartEntries.Count && dashboardCalorieChartEntries[i].LogDate.Date == chartDate.Date)
+                    {
+                        dashboardViewModel.DashboardCalorieChartModels.Add(new DashboardCalorieChartModel()
+                        {
+                            Id = dashboardCalorieChartEntries[i].Id,
+                            //Date = dashboardCalorieChartEntries[i].LogDate.DayOfWeek.ToString(),
+                            Date = dashboardCalorieChartEntries[i].LogDate.ToString("ddd, dd MMM"),
+                            Calories = dashboardCalorieChartEntries[i].Calories,
+                        });
+
+                        i++;
+                    }
+                    else
+                    {
+                        // No record for this day. Create default entry for this date.
+                        dashboardViewModel.DashboardCalorieChartModels.Add(new DashboardCalorieChartModel()
+                        {
+                            Id = 0,
+                            Date = chartDate.ToString("ddd, dd MMM"),
+                            Calories = 0,
+                        });
+                    }                   
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+            }
+            else
+            {
+                // No valid data from the database, make placeholder data.
+                for (int i = 0; i < chartDays; i++)
+                {
+                    dashboardViewModel.DashboardCalorieChartModels.Add(new DashboardCalorieChartModel()
+                    {
+                        Id = 0,
+                        Date = chartDate.DayOfWeek.ToString(),
+                        Calories = 0,
+                    });
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+
+                // TODO: Create a text entry to display on the chart an error message about the data.
+            }
+
+            return dashboardViewModel;
+        }
+
         private List<DashboardCalorieChartEntry> CreateDashboardCalorieChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
         {
-            const int dcceListSize = 10;
+            int dcceListSize = (int)_globalProperties.Application["DashboardCalorieChartDays"];
 
             List<DashboardCalorieChartEntry> dcceList = new List<DashboardCalorieChartEntry>(dcceListSize);
 
@@ -197,9 +283,7 @@ namespace EatDrinkFit.Web.Services.Charts
 
                 // Decrease the date one for the next object.
                 logDate = logDate.AddDays(-1);
-            }
-
-            
+            }  
 
             return dcceList;
         }

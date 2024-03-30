@@ -13,9 +13,12 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
+using EatDrinkFit.Web.Models.Charts;
+
 namespace EatDrinkFit.Web.Models
 {
     public class DashboardViewModel
     {
+        public List<DashboardCalorieChartModel>? DashboardCalorieChartModels { get; set; }
     }
 }

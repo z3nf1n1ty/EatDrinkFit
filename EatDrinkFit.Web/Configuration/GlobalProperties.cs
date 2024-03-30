@@ -30,7 +30,13 @@ namespace EatDrinkFit.Web.Configuration
         public ConcurrentDictionary<string, object> Application { get; } = new ConcurrentDictionary<string, object>()
         {
             //["Setting"] = true,
+
+            // Database Settings
             ["DatabaseTimezoneIANA"] = true,
+
+            // Chart Settings
+            ["DashboardCalorieChartDays"] = 14,
+            ["DashboardMacroChartDays"] = 7,
         };
 
         //public static IServiceCollection AddGlobalProperties(IServiceCollection services)
