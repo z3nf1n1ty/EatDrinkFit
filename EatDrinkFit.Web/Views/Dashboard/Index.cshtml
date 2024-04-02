@@ -60,7 +60,31 @@
         }
     }
 
-            dashboardCaloriesChart(calorieChartLabels, caloriesChartDate);
+        dashboardCaloriesChart(calorieChartLabels, caloriesChartDate);
+
+        var macroChartLabels = [];
+        var macroChartFatDate = [];
+        var macroChartCarbDate = [];
+        var macroChartProteinDate = [];
+
+    @if (Model.DashboardMacroChartModels is not null && Model.DashboardMacroChartModels.Count > 0)
+    {
+        // foreach (var item in Model.DashboardCalorieChartModels)
+        // {
+        // 	@:calorieChartLabels.push('@item.Date');
+        // 	@:caloriesChartDate.push('@item.Calories');
+        // }
+
+        for (int i = Model.DashboardMacroChartModels.Count - 1; i >= 0; i--)
+        {
+            @:macroChartLabels.push('@Model.DashboardMacroChartModels[i].Date');
+            @:macroChartFatDate.push('@Model.DashboardMacroChartModels[i].Fat');
+            @:macroChartCarbDate.push('@Model.DashboardMacroChartModels[i].Carb');
+            @:macroChartProteinDate.push('@Model.DashboardMacroChartModels[i].Protein');
+        }
+    }
+
+            dashboardMacroChart(macroChartLabels, macroChartFatDate, macroChartCarbDate, macroChartProteinDate);
 	}
 </script>
 
@@ -140,7 +164,7 @@
             </div>
             <div class="card-body">
                 <div class="chart">
-                    <canvas id="CaloriesBarChart" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;"></canvas>
+                    <canvas id="CaloriesBarChart" style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                 </div>
             </div>
 
@@ -150,10 +174,12 @@
 </div>
 
 <div class="row">
+
     <div class="col-xl-6">
-        <div class="card card-warning">
+
+        <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Daily Calories | Last 10 Days | Goal: 1800-2000cal</h3>
+                <h3 class="card-title">Daily Macros | Last 7 Days | Goal: 140+ g Protein</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -165,7 +191,7 @@
             </div>
             <div class="card-body">
                 <div class="chart">
-                    <canvas id="CaloriesBarChart2" style="min-height: 500px; height: 250px; max-height: 500px; max-width: 100%;"></canvas>
+                    <canvas id="MacrosBarChart" style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
                 </div>
             </div>
 
@@ -173,5 +199,28 @@
     </div>
 
     <div class="col-xl-6">
+
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Daily Micros | Last 7 Days | Goal: 140+ g Protein</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <canvas id="MicrosBarChart" style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+
+        </div>
     </div>
+
+    </div>
+
 </div>

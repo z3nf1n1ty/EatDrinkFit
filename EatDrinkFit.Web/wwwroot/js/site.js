@@ -196,3 +196,115 @@ function dashboardCaloriesChart(inputLables, inputData) {
     //const chartVersion = document.getElementById('chartVersion');
     //chartVersion.innerText = Chart.version;
 }
+
+function dashboardMacroChart(inputLables, inputFatData, inputCarbData, inputProteinData) {
+    const data = {
+        labels: inputLables,
+        datasets: [{
+            label: 'Fat',
+            data: inputFatData,
+            backgroundColor: [
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+                'rgba(23, 162, 184, 0.6)',
+            ],
+            borderWidth: 0
+        },
+        {
+            label: 'Carbs',
+            data: inputCarbData,
+            backgroundColor: [
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+                'rgba(255, 193, 7, 0.6)',
+            ],
+            borderWidth: 0
+        },
+        {
+            label: 'Protein',
+            data: inputProteinData,
+            backgroundColor: [
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+                'rgba(40, 167, 69, 0.6)',
+            ],
+            borderWidth: 0
+        }]
+    };
+
+    // custom topline plugin
+    const topLine = {
+        id: 'topLine',
+        afterDatasetsDraw(chart, args, plugins) {
+            const { ctx, data } = chart;
+
+            ctx.save();
+            for (var d = 0; d < 3; d++) {
+                chart.getDatasetMeta(d).data.forEach((datapoint, index) => {
+
+                    // topline content removed
+
+                    // text
+                    ctx.font = 'bold 12px sans-serif';
+                    //ctx.fillStyle = 'black';
+                    ctx.fillStyle = 'rgba(31, 45, 61, 0.8)';
+                    ctx.textAlign = 'center';
+
+                    // Fat
+                    const txtValue0 = data.datasets[0].data[index];
+                    ctx.fillText(txtValue0, datapoint.x, datapoint.y - 10);
+
+                    //// Carb
+                    //const txtValue1 = data.datasets[1].data[index];
+                    //ctx.fillText(txtValue1, datapoint.x, datapoint.y - 10);
+
+                    //// Protein
+                    //const txtValue2 = data.datasets[2].data[index];
+                    //ctx.fillText(txtValue2, datapoint.x, datapoint.y - 10);
+                });
+            }
+        }
+    }
+
+    // config 
+    const config = {
+        type: 'bar',
+        data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grace: '5%'
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                },
+            }
+        },
+        plugins: [topLine]
+    };
+
+    // render init block
+    const myChart = new Chart(
+        document.getElementById('MacrosBarChart'),
+        config
+    );
+
+    // Instantly assign Chart.js version
+    //const chartVersion = document.getElementById('chartVersion');
+    //chartVersion.innerText = Chart.version;
+}

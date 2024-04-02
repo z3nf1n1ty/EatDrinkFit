@@ -41,6 +41,8 @@ namespace EatDrinkFit.Web.Services.Charts
         public Task<bool> ProcessChartDataAfterMacroLogUpdate(string? userID, string userTimezone);
 
         public Task<DashboardViewModel> GetDashboardCalorieChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
+
+        public Task<DashboardViewModel> GetDashboardMacroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
     }
 
     /// <summary>
@@ -153,10 +155,29 @@ namespace EatDrinkFit.Web.Services.Charts
             await _dbContext.SaveChangesAsync();
 
             // Process the macro data into the macro chart data.
-            // TODO: keep making chart data for the dashboard.
-
+            List<DashboardMacroChartEntry> dmaceList = CreateDashboardMacroChartEntry(macroLogs, userID, startDate);
 
             // Store the macro chart data.
+            foreach (var r in dmaceList)
+            {
+                if (r is not null)
+                {
+                    if (await _dbContext.DashboardMacroChartEnteries.AnyAsync(e => e == r))
+                    {
+                        _dbContext.DashboardMacroChartEnteries.Update(r).Property(x => x.Id).IsModified = false;
+                    }
+                    else
+                    {
+                        //await _dbContext.DashboardMacroChartEnteries.AddAsync(r);
+                        _dbContext.DashboardMacroChartEnteries.Add(r);
+                        // Add should be local until the savechanges, since the identity does not need to be used.
+                        // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
+                        // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
+                    }
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
 
             // Save the complete set of changes to the database.
             await transaction.CommitAsync();
@@ -244,6 +265,91 @@ namespace EatDrinkFit.Web.Services.Charts
             return dashboardViewModel;
         }
 
+        /// <summary>
+        /// Get the dashboard macro chart data in the form of a list of DashbardMacroChartModel stored in a DashboardViewModel.
+        /// </summary>
+        /// <param name="dashboardViewModel"></param>
+        /// <param name="userID"></param>
+        /// <param name="startDate"></param>
+        /// <returns>A list of Macro Chart Data staring with the most current date.</returns>
+        public async Task<DashboardViewModel> GetDashboardMacroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate)
+        {
+            if (dashboardViewModel is null)
+            {
+                dashboardViewModel = new DashboardViewModel();
+            }
+
+            int chartDays = (int)_globalProperties.Application["DashboardMacroChartDays"];
+            var chartDate = new DateTime(startDate.Ticks);
+            var tempDate = chartDate.AddDays(-1 * chartDays);
+
+            dashboardViewModel.DashboardMacroChartModels = new List<Models.Charts.DashboardMacroChartModel>(chartDays);
+
+            var dashboardMacroChartEntries = await _dbContext.DashboardMacroChartEnteries
+                                                 .Where(e => e.UserId == userID && e.LogDate > tempDate)
+                                                 .OrderByDescending(e => e.LogDate)
+                                                 .Select(e => new { e.Id, e.LogDate, e.Fat, e.Carb, e.Protein })
+                                                 .ToListAsync();
+
+            if (dashboardMacroChartEntries is not null)
+            {
+                int i = 0;
+
+                while (chartDate > tempDate)
+                {
+                    // Check if the current index in the list matches the current logDate.
+                    if (i < dashboardMacroChartEntries.Count && dashboardMacroChartEntries[i].LogDate.Date == chartDate.Date)
+                    {
+                        dashboardViewModel.DashboardMacroChartModels.Add(new DashboardMacroChartModel()
+                        {
+                            Id = dashboardMacroChartEntries[i].Id,
+                            Date = dashboardMacroChartEntries[i].LogDate.ToString("ddd, dd MMM"),
+                            Fat = dashboardMacroChartEntries[i].Fat,
+                            Carb = dashboardMacroChartEntries[i].Carb,
+                            Protein = dashboardMacroChartEntries[i].Protein,
+                        });
+
+                        i++;
+                    }
+                    else
+                    {
+                        // No record for this day. Create default entry for this date.
+                        dashboardViewModel.DashboardMacroChartModels.Add(new DashboardMacroChartModel()
+                        {
+                            Id = 0,
+                            Date = chartDate.ToString("ddd, dd MMM"),
+                            Fat = 0,
+                            Carb = 0,
+                            Protein = 0,
+                        });
+                    }
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+            }
+            else
+            {
+                // No valid data from the database, make placeholder data.
+                for (int i = 0; i < chartDays; i++)
+                {
+                    dashboardViewModel.DashboardMacroChartModels.Add(new DashboardMacroChartModel()
+                    {
+                        Id = 0,
+                        Date = chartDate.DayOfWeek.ToString(),
+                        Fat = 0,
+                        Carb = 0,
+                        Protein = 0,
+                    });
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+
+                // TODO: Create a text entry to display on the chart an error message about the data.
+            }
+
+            return dashboardViewModel;
+        }
+
         private List<DashboardCalorieChartEntry> CreateDashboardCalorieChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
         {
             int dcceListSize = (int)_globalProperties.Application["DashboardCalorieChartDays"];
@@ -290,7 +396,56 @@ namespace EatDrinkFit.Web.Services.Charts
 
         private List<DashboardMacroChartEntry> CreateDashboardMacroChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
         {
-            return null;
+            int dmceListSize = (int)_globalProperties.Application["DashboardMacroChartDays"];
+
+            List<DashboardMacroChartEntry> dmceList = new List<DashboardMacroChartEntry>(dmceListSize);
+
+            for (int i = 0; i < dmceListSize; i++)
+            {
+                dmceList.Add(new DashboardMacroChartEntry());
+            }
+
+            var logDate = new DateTime(startDate.Ticks);
+            int l = 0;
+
+            // Iterate through each chart datapoint, and then search the macro log list for matching data.
+            foreach (var dmce in dmceList)
+            {
+                // Set the current DashboardCaloriesChartEntry
+                dmce.LogDate = logDate;
+                dmce.UserId = userID;
+
+                float fat = 0;
+                float carb = 0;
+                float protein = 0;
+
+                while (l < macroLogs.Count)
+                {
+                    // Check if the current index in the list matches the current logDate
+                    if (logDate.Date == macroLogs[l].TimeStamp.Date)
+                    {
+                        // Sum Macros
+                        fat += macroLogs[l].Fat;
+                        carb += macroLogs[l].TotalCarb;
+                        protein += macroLogs[l].Protein;
+
+                        l++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                dmce.Fat = (uint)MathF.Round(fat);
+                dmce.Carb = (uint)MathF.Round(carb);
+                dmce.Protein = (uint)MathF.Round(protein);
+
+                // Decrease the date one for the next object.
+                logDate = logDate.AddDays(-1);
+            }
+
+            return dmceList;
         }
     }    
 }

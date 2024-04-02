@@ -1,5 +1,5 @@
 ﻿// Project: EatDrinkFit.Web
-// File: Models/DashboardViewModel.cs
+// File: Models/Charts/DashboardMacroChartModel.cs
 // Origonially designed for ASP.NET Core 8.0
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -13,14 +13,20 @@
 // FileContributor: Original contributer Michael Peterson 14036481+z3nf1n1ty@users.noreply.github.com
 // FileContributor:
 
-using EatDrinkFit.Web.Models.Charts;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EatDrinkFit.Web.Models
+namespace EatDrinkFit.Web.Models.Charts
 {
-    public class DashboardViewModel
+    public class DashboardMacroChartModel
     {
-        public List<DashboardCalorieChartModel>? DashboardCalorieChartModels { get; set; }
+        public uint Id { get; set; }
 
-        public List<DashboardMacroChartModel>? DashboardMacroChartModels { get; set; }
+        public string Date { get; set; } = string.Empty;
+
+        public uint Fat { get; set; }
+
+        public uint Carb { get; set; }
+
+        public uint Protein { get; set; }
     }
 }

@@ -69,6 +69,9 @@ namespace EatDrinkFit.Web.Controllers
             // Get calorie chart data and add it to the view model.
             dashboardViewModel = await _dashboardChartDataService.GetDashboardCalorieChartModels(dashboardViewModel, userID, startDate);
 
+            // Get Macro chart data and add it to the view model.
+            dashboardViewModel = await _dashboardChartDataService.GetDashboardMacroChartModels(dashboardViewModel, userID, startDate);
+
             return View(dashboardViewModel);
         }
 
