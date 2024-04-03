@@ -85,6 +85,32 @@
     }
 
             dashboardMacroChart(macroChartLabels, macroChartFatDate, macroChartCarbDate, macroChartProteinDate);
+
+        var microChartLabels = [];
+        var microChartCholesteroltDate = [];
+        var microChartSodiumDate = [];
+        var microChartFiberDate = [];
+        var microChartSugarDate = [];
+
+    @if (Model.DashboardMicroChartModels is not null && Model.DashboardMicroChartModels.Count > 0)
+    {
+        // foreach (var item in Model.DashboardCalorieChartModels)
+        // {
+        // 	@:calorieChartLabels.push('@item.Date');
+        // 	@:caloriesChartDate.push('@item.Calories');
+        // }
+
+        for (int i = Model.DashboardMicroChartModels.Count - 1; i >= 0; i--)
+        {
+            @:microChartLabels.push('@Model.DashboardMicroChartModels[i].Date');
+            @:microChartCholesteroltDate.push('@Model.DashboardMicroChartModels[i].Cholesterol');
+            @:microChartSodiumDate.push('@Model.DashboardMicroChartModels[i].Sodium');
+            @:microChartFiberDate.push('@Model.DashboardMicroChartModels[i].Fiber');
+            @:microChartSugarDate.push('@Model.DashboardMicroChartModels[i].Sugar');
+        }
+    }
+
+            dashboardMicroChart(microChartLabels, microChartCholesteroltDate, microChartSodiumDate, microChartFiberDate, microChartSugarDate);
 	}
 </script>
 

@@ -43,6 +43,8 @@ namespace EatDrinkFit.Web.Services.Charts
         public Task<DashboardViewModel> GetDashboardCalorieChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
 
         public Task<DashboardViewModel> GetDashboardMacroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
+
+        public Task<DashboardViewModel> GetDashboardMicroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
     }
 
     /// <summary>
@@ -170,6 +172,31 @@ namespace EatDrinkFit.Web.Services.Charts
                     {
                         //await _dbContext.DashboardMacroChartEnteries.AddAsync(r);
                         _dbContext.DashboardMacroChartEnteries.Add(r);
+                        // Add should be local until the savechanges, since the identity does not need to be used.
+                        // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
+                        // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
+                    }
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            // Process the micro data into the micro chart data.
+            List<DashboardMicroChartEntry> dmiaceList = CreateDashboardMicroChartEntry(macroLogs, userID, startDate);
+
+            // Store the macro chart data.
+            foreach (var r in dmiaceList)
+            {
+                if (r is not null)
+                {
+                    if (await _dbContext.DashboardMicroChartEnteries.AnyAsync(e => e == r))
+                    {
+                        _dbContext.DashboardMicroChartEnteries.Update(r).Property(x => x.Id).IsModified = false;
+                    }
+                    else
+                    {
+                        //await _dbContext.DashboardMacroChartEnteries.AddAsync(r);
+                        _dbContext.DashboardMicroChartEnteries.Add(r);
                         // Add should be local until the savechanges, since the identity does not need to be used.
                         // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
                         // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
@@ -350,6 +377,94 @@ namespace EatDrinkFit.Web.Services.Charts
             return dashboardViewModel;
         }
 
+        /// <summary>
+        /// Get the dashboard micro chart data in the form of a list of DashbardMicroChartModel stored in a DashboardViewModel.
+        /// </summary>
+        /// <param name="dashboardViewModel"></param>
+        /// <param name="userID"></param>
+        /// <param name="startDate"></param>
+        /// <returns>A list of Micro Chart Data staring with the most current date.</returns>
+        public async Task<DashboardViewModel> GetDashboardMicroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate)
+        {
+            if (dashboardViewModel is null)
+            {
+                dashboardViewModel = new DashboardViewModel();
+            }
+
+            int chartDays = (int)_globalProperties.Application["DashboardMicroChartDays"];
+            var chartDate = new DateTime(startDate.Ticks);
+            var tempDate = chartDate.AddDays(-1 * chartDays);
+
+            dashboardViewModel.DashboardMicroChartModels = new List<Models.Charts.DashboardMicroChartModel>(chartDays);
+
+            var dashboardMicroChartEntries = await _dbContext.DashboardMicroChartEnteries
+                                                 .Where(e => e.UserId == userID && e.LogDate > tempDate)
+                                                 .OrderByDescending(e => e.LogDate)
+                                                 .Select(e => new { e.Id, e.LogDate, e.Cholesterol, e.Sodium, e.Fiber, e.Sugar })
+                                                 .ToListAsync();
+
+            if (dashboardMicroChartEntries is not null)
+            {
+                int i = 0;
+
+                while (chartDate > tempDate)
+                {
+                    // Check if the current index in the list matches the current logDate.
+                    if (i < dashboardMicroChartEntries.Count && dashboardMicroChartEntries[i].LogDate.Date == chartDate.Date)
+                    {
+                        dashboardViewModel.DashboardMicroChartModels.Add(new DashboardMicroChartModel()
+                        {
+                            Id = dashboardMicroChartEntries[i].Id,
+                            Date = dashboardMicroChartEntries[i].LogDate.ToString("ddd, dd MMM"),
+                            Cholesterol = dashboardMicroChartEntries[i].Cholesterol,
+                            Sodium = dashboardMicroChartEntries[i].Sodium,
+                            Fiber = dashboardMicroChartEntries[i].Fiber,
+                            Sugar = dashboardMicroChartEntries[i].Sugar,
+                        });
+
+                        i++;
+                    }
+                    else
+                    {
+                        // No record for this day. Create default entry for this date.
+                        dashboardViewModel.DashboardMicroChartModels.Add(new DashboardMicroChartModel()
+                        {
+                            Id = 0,
+                            Date = chartDate.ToString("ddd, dd MMM"),
+                            Cholesterol = 0,
+                            Sodium = 0,
+                            Fiber = 0,
+                            Sugar = 0,
+                        });
+                    }
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+            }
+            else
+            {
+                // No valid data from the database, make placeholder data.
+                for (int i = 0; i < chartDays; i++)
+                {
+                    dashboardViewModel.DashboardMicroChartModels.Add(new DashboardMicroChartModel()
+                    {
+                        Id = 0,
+                        Date = chartDate.DayOfWeek.ToString(),
+                        Cholesterol = 0,
+                        Sodium = 0,
+                        Fiber = 0,
+                        Sugar = 0,
+                    });
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+
+                // TODO: Create a text entry to display on the chart an error message about the data.
+            }
+
+            return dashboardViewModel;
+        }
+
         private List<DashboardCalorieChartEntry> CreateDashboardCalorieChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
         {
             int dcceListSize = (int)_globalProperties.Application["DashboardCalorieChartDays"];
@@ -440,6 +555,63 @@ namespace EatDrinkFit.Web.Services.Charts
                 dmce.Fat = (uint)MathF.Round(fat);
                 dmce.Carb = (uint)MathF.Round(carb);
                 dmce.Protein = (uint)MathF.Round(protein);
+
+                // Decrease the date one for the next object.
+                logDate = logDate.AddDays(-1);
+            }
+
+            return dmceList;
+        }
+
+        private List<DashboardMicroChartEntry> CreateDashboardMicroChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
+        {
+            int dmceListSize = (int)_globalProperties.Application["DashboardMicroChartDays"];
+
+            List<DashboardMicroChartEntry> dmceList = new List<DashboardMicroChartEntry>(dmceListSize);
+
+            for (int i = 0; i < dmceListSize; i++)
+            {
+                dmceList.Add(new DashboardMicroChartEntry());
+            }
+
+            var logDate = new DateTime(startDate.Ticks);
+            int l = 0;
+
+            // Iterate through each chart datapoint, and then search the macro log list for matching data.
+            foreach (var dmce in dmceList)
+            {
+                // Set the current DashboardCaloriesChartEntry
+                dmce.LogDate = logDate;
+                dmce.UserId = userID;
+
+                float cholesterol = 0;
+                float sodium = 0;
+                float fiber = 0;
+                float sugar = 0;
+
+                while (l < macroLogs.Count)
+                {
+                    // Check if the current index in the list matches the current logDate
+                    if (logDate.Date == macroLogs[l].TimeStamp.Date)
+                    {
+                        // Sum Macros
+                        cholesterol += macroLogs[l].Cholesterol;
+                        sodium += macroLogs[l].Sodium;
+                        fiber += macroLogs[l].Fiber;
+                        sugar += macroLogs[l].Protein;
+
+                        l++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                dmce.Cholesterol = (uint)MathF.Round(cholesterol);
+                dmce.Sodium = (uint)MathF.Round(sodium);
+                dmce.Fiber = (uint)MathF.Round(fiber);
+                dmce.Sugar = (uint)MathF.Round(sugar);
 
                 // Decrease the date one for the next object.
                 logDate = logDate.AddDays(-1);

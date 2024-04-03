@@ -44,5 +44,7 @@ namespace EatDrinkFit.Web.Data
         public DbSet<DashboardCalorieChartEntry> DashboardCalorieChartEnteries { get; set; }
 
         public DbSet<DashboardMacroChartEntry> DashboardMacroChartEnteries { get; set; }
+
+        public DbSet<DashboardMicroChartEntry> DashboardMicroChartEnteries { get; set; }
     }
 }
