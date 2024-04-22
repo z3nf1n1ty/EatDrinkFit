@@ -38,6 +38,7 @@ namespace EatDrinkFit.Web.Configuration
             ["DashboardCalorieChartDays"] = 14,
             ["DashboardMacroChartDays"] = 7,
             ["DashboardMicroChartDays"] = 7,
+            ["DashboardPercentCaloriesChartDays"] = 1,
         };
 
         //public static IServiceCollection AddGlobalProperties(IServiceCollection services)

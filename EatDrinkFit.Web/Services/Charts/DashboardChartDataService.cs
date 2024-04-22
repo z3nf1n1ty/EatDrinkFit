@@ -45,6 +45,8 @@ namespace EatDrinkFit.Web.Services.Charts
         public Task<DashboardViewModel> GetDashboardMacroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
 
         public Task<DashboardViewModel> GetDashboardMicroChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
+
+        public Task<DashboardViewModel> GetDashboardPercentCalChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate);
     }
 
     /// <summary>
@@ -197,6 +199,31 @@ namespace EatDrinkFit.Web.Services.Charts
                     {
                         //await _dbContext.DashboardMacroChartEnteries.AddAsync(r);
                         _dbContext.DashboardMicroChartEnteries.Add(r);
+                        // Add should be local until the savechanges, since the identity does not need to be used.
+                        // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
+                        // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
+                    }
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            // Process the macro data into the percent calorie chart data.
+            List<DashboardPercentCalChartEntry> dpcceList = CreateDashboardPercentCaloriesChartEntry(macroLogs, userID, startDate);
+
+            // Store the macro chart data.
+            foreach (var r in dpcceList)
+            {
+                if (r is not null)
+                {
+                    if (await _dbContext.DashboardPercentCalChartEntry.AnyAsync(e => e == r))
+                    {
+                        _dbContext.DashboardPercentCalChartEntry.Update(r).Property(x => x.Id).IsModified = false;
+                    }
+                    else
+                    {
+                        //await _dbContext.DashboardMacroChartEnteries.AddAsync(r);
+                        _dbContext.DashboardPercentCalChartEntry.Add(r);
                         // Add should be local until the savechanges, since the identity does not need to be used.
                         // Therfore the local add should be faster by removing the additional task related job overhead that is not providing benifit.
                         // Ref: https://medium.com/@iamprovidence/addasync-in-ef-is-pure-evil-d31231d8f04e
@@ -465,6 +492,94 @@ namespace EatDrinkFit.Web.Services.Charts
             return dashboardViewModel;
         }
 
+        /// <summary>
+        /// Get the dashboard percent calorie chart data in the form of a list of DashboardPercentCalChartModel stored in a DashboardViewModel.
+        /// </summary>
+        /// <param name="dashboardViewModel"></param>
+        /// <param name="userID"></param>
+        /// <param name="startDate"></param>
+        /// <returns>A list of Percent Calorie Chart Data staring with the most current date.</returns>
+        public async Task<DashboardViewModel> GetDashboardPercentCalChartModels(DashboardViewModel dashboardViewModel, string userID, DateTime startDate)
+        {
+            if (dashboardViewModel is null)
+            {
+                dashboardViewModel = new DashboardViewModel();
+            }
+
+            int chartDays = (int)_globalProperties.Application["DashboardPercentCaloriesChartDays"];
+            var chartDate = new DateTime(startDate.Ticks);
+            var tempDate = chartDate.AddDays(-1 * chartDays);
+
+            dashboardViewModel.DashboardPercentCalChartModel = new List<Models.Charts.DashboardPercentCalChartModel>(chartDays);
+
+            var dashboardPercentCalChartEntries = await _dbContext.DashboardPercentCalChartEntry
+                                                 .Where(e => e.UserId == userID && e.LogDate > tempDate)
+                                                 .OrderByDescending(e => e.LogDate)
+                                                 .Select(e => new { e.Id, e.LogDate, e.PercentOther, e.PercentFat, e.PercentCarb, e.PercentProtein })
+                                                 .ToListAsync();
+
+            if (dashboardPercentCalChartEntries is not null)
+            {
+                int i = 0;
+
+                while (chartDate > tempDate)
+                {
+                    // Check if the current index in the list matches the current logDate.
+                    if (i < dashboardPercentCalChartEntries.Count && dashboardPercentCalChartEntries[i].LogDate.Date == chartDate.Date)
+                    {
+                        dashboardViewModel.DashboardPercentCalChartModel.Add(new DashboardPercentCalChartModel()
+                        {
+                            Id = dashboardPercentCalChartEntries[i].Id,
+                            Date = dashboardPercentCalChartEntries[i].LogDate.ToString("ddd, dd MMM"),
+                            PercentOther = dashboardPercentCalChartEntries[i].PercentOther,
+                            PercentFat = dashboardPercentCalChartEntries[i].PercentFat,
+                            PercentCarb = dashboardPercentCalChartEntries[i].PercentCarb,
+                            PercentProtein = dashboardPercentCalChartEntries[i].PercentProtein,
+                        });
+
+                        i++;
+                    }
+                    else
+                    {
+                        // No record for this day. Create default entry for this date.
+                        dashboardViewModel.DashboardPercentCalChartModel.Add(new DashboardPercentCalChartModel()
+                        {
+                            Id = 0,
+                            Date = chartDate.ToString("ddd, dd MMM"),
+                            PercentOther = 0,
+                            PercentFat = 0,
+                            PercentCarb = 0,
+                            PercentProtein = 0,
+                        });
+                    }
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+            }
+            else
+            {
+                // No valid data from the database, make placeholder data.
+                for (int i = 0; i < chartDays; i++)
+                {
+                    dashboardViewModel.DashboardPercentCalChartModel.Add(new DashboardPercentCalChartModel()
+                    {
+                        Id = 0,
+                        Date = chartDate.DayOfWeek.ToString(),
+                        PercentOther = 0,
+                        PercentFat = 0,
+                        PercentCarb = 0,
+                        PercentProtein = 0,
+                    });
+
+                    chartDate = chartDate.AddDays(-1);
+                }
+
+                // TODO: Create a text entry to display on the chart an error message about the data.
+            }
+
+            return dashboardViewModel;
+        }
+
         private List<DashboardCalorieChartEntry> CreateDashboardCalorieChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
         {
             int dcceListSize = (int)_globalProperties.Application["DashboardCalorieChartDays"];
@@ -618,6 +733,91 @@ namespace EatDrinkFit.Web.Services.Charts
             }
 
             return dmceList;
+        }
+
+        private List<DashboardPercentCalChartEntry> CreateDashboardPercentCaloriesChartEntry(List<TransactionMacroLog> macroLogs, string? userID, DateTime startDate)
+        {
+            int dpcceListSize = (int)_globalProperties.Application["DashboardPercentCaloriesChartDays"];
+
+            List<DashboardPercentCalChartEntry> dpcceList = new List<DashboardPercentCalChartEntry>(dpcceListSize);
+
+            for (int i = 0; i < dpcceListSize; i++)
+            {
+                dpcceList.Add(new DashboardPercentCalChartEntry());
+            }
+
+            var logDate = new DateTime(startDate.Ticks);
+            int l = 0;
+
+            // Iterate through each chart datapoint, and then search the macro log list for matching data.
+            foreach (var dpcce in dpcceList)
+            {
+                // Set the current DashboardCaloriesChartEntry
+                dpcce.LogDate = logDate;
+                dpcce.UserId = userID;
+
+                float fat = 0;
+                float carb = 0;
+                float protein = 0;
+                float cal = 0;
+
+                while (l < macroLogs.Count)
+                {
+                    // Check if the current index in the list matches the current logDate
+                    if (logDate.Date == macroLogs[l].TimeStamp.Date)
+                    {
+                        // Sum Macros
+                        fat += macroLogs[l].Fat;
+                        carb += macroLogs[l].TotalCarb;
+                        protein += macroLogs[l].Protein;
+                        cal += macroLogs[l].Calories;
+
+                        l++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                uint pFat = (uint)MathF.Floor(( fat * 9 ) / cal * 100);
+                uint pCarb = (uint)MathF.Floor(( carb * 4 ) / cal * 100);
+                uint pProtein = (uint)MathF.Floor(( protein * 4 ) / cal * 100);
+                uint pOther = 0;
+
+                uint sum = pFat + pCarb + pProtein;
+
+                if (sum == 100)
+                {
+                    // macros equal 100% no other to calculate or adjust.
+                }
+                else if (sum < 100)
+                {
+                    // macros are less than 100% and need to calculate other.
+                    pOther = 100 - sum;
+                }
+                else
+                {
+                    // macros are more than 100% need to adjust for errors.
+
+                    pFat = (uint)MathF.Floor(pFat / sum * 100);
+                    pCarb = (uint)MathF.Floor(pCarb / sum * 100);
+                    pProtein = (uint)MathF.Floor(pProtein / sum * 100);
+
+                    pOther = 100 - pFat - pCarb - pProtein;
+                    
+                }                
+
+                dpcce.PercentFat = pFat;
+                dpcce.PercentCarb = pCarb;
+                dpcce.PercentProtein = pProtein;
+                dpcce.PercentOther = pOther;
+
+                // Decrease the date one for the next object.
+                logDate = logDate.AddDays(-1);
+            }
+
+            return dpcceList;
         }
     }    
 }

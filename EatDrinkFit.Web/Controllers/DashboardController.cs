@@ -75,6 +75,9 @@ namespace EatDrinkFit.Web.Controllers
             // Get Micro chart data and add it to the view model.
             dashboardViewModel = await _dashboardChartDataService.GetDashboardMicroChartModels(dashboardViewModel, userID, startDate);
 
+            // Get Percent Calorie chart data and add it to the view model.
+            dashboardViewModel = await _dashboardChartDataService.GetDashboardPercentCalChartModels(dashboardViewModel, userID, startDate);
+
             return View(dashboardViewModel);
         }
 

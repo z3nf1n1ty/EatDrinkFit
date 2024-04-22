@@ -111,6 +111,32 @@
     }
 
             dashboardMicroChart(microChartLabels, microChartCholesteroltDate, microChartSodiumDate, microChartFiberDate, microChartSugarDate);
+
+        var percentCalChartLabels = [];
+        var percentCalChartOtherData = [];
+        var percentCalChartFatData = [];
+        var percentCalChartCarbData = [];
+        var percentCalChartProteinData = [];
+
+    @if (Model.DashboardPercentCalChartModel is not null && Model.DashboardPercentCalChartModel.Count > 0)
+    {
+        // foreach (var item in Model.DashboardCalorieChartModels)
+        // {
+        // 	@:calorieChartLabels.push('@item.Date');
+        // 	@:caloriesChartDate.push('@item.Calories');
+        // }
+
+        for (int i = Model.DashboardPercentCalChartModel.Count - 1; i >= 0; i--)
+        {
+            @:percentCalChartLabels.push('@Model.DashboardPercentCalChartModel[i].Date');
+            @:percentCalChartOtherData.push('@Model.DashboardPercentCalChartModel[i].PercentOther');
+            @:percentCalChartFatData.push('@Model.DashboardPercentCalChartModel[i].PercentFat');
+            @:percentCalChartCarbData.push('@Model.DashboardPercentCalChartModel[i].PercentCarb');
+            @:percentCalChartProteinData.push('@Model.DashboardPercentCalChartModel[i].PercentProtein');
+        }
+    }
+
+            dashboardPercentCaloriesChart(percentCalChartLabels, percentCalChartOtherData, percentCalChartFatData, percentCalChartCarbData, percentCalChartProteinData);
 	}
 </script>
 
@@ -164,7 +190,7 @@
 				</div>
 			</div>
 			<div class="card-body">
-				<canvas id="donutChart" style="min-height: 64px; height: 64px; max-height: 64px; max-width: 100%;"></canvas>
+				<canvas id="PercentCaloriesChart" style="min-height: 64px; height: 64px; max-height: 64px; max-width: 100%;"></canvas>
 			</div>
 
 		</div>
